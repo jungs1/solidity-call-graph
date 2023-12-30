@@ -1,0 +1,1050 @@
+    /* "contracts/example.sol":664:962  contract Wallet {... */
+  mstore(0x40, 0x80)
+    /* "contracts/example.sol":712:770  constructor(IToken _token) {... */
+  callvalue
+  dup1
+  iszero
+  tag_1
+  jumpi
+  0x00
+  dup1
+  revert
+tag_1:
+  pop
+  mload(0x40)
+  sub(codesize, bytecodeSize)
+  dup1
+  bytecodeSize
+  dup4
+  codecopy
+  dup2
+  dup2
+  add
+  0x40
+  mstore
+  dup2
+  add
+  swap1
+  tag_2
+  swap2
+  swap1
+  tag_3
+  jump	// in
+tag_2:
+    /* "contracts/example.sol":757:763  _token */
+  dup1
+    /* "contracts/example.sol":749:754  token */
+  0x00
+  dup1
+    /* "contracts/example.sol":749:763  token = _token */
+  0x0100
+  exp
+  dup2
+  sload
+  dup2
+  0xffffffffffffffffffffffffffffffffffffffff
+  mul
+  not
+  and
+  swap1
+  dup4
+  0xffffffffffffffffffffffffffffffffffffffff
+  and
+  mul
+  or
+  swap1
+  sstore
+  pop
+    /* "contracts/example.sol":712:770  constructor(IToken _token) {... */
+  pop
+    /* "contracts/example.sol":664:962  contract Wallet {... */
+  jump(tag_6)
+    /* "#utility.yul":88:205   */
+tag_8:
+    /* "#utility.yul":197:198   */
+  0x00
+    /* "#utility.yul":194:195   */
+  dup1
+    /* "#utility.yul":187:199   */
+  revert
+    /* "#utility.yul":334:460   */
+tag_10:
+    /* "#utility.yul":371:378   */
+  0x00
+    /* "#utility.yul":411:453   */
+  0xffffffffffffffffffffffffffffffffffffffff
+    /* "#utility.yul":404:409   */
+  dup3
+    /* "#utility.yul":400:454   */
+  and
+    /* "#utility.yul":389:454   */
+  swap1
+  pop
+    /* "#utility.yul":334:460   */
+  swap2
+  swap1
+  pop
+  jump	// out
+    /* "#utility.yul":466:562   */
+tag_11:
+    /* "#utility.yul":503:510   */
+  0x00
+    /* "#utility.yul":532:556   */
+  tag_21
+    /* "#utility.yul":550:555   */
+  dup3
+    /* "#utility.yul":532:556   */
+  tag_10
+  jump	// in
+tag_21:
+    /* "#utility.yul":521:556   */
+  swap1
+  pop
+    /* "#utility.yul":466:562   */
+  swap2
+  swap1
+  pop
+  jump	// out
+    /* "#utility.yul":568:676   */
+tag_12:
+    /* "#utility.yul":617:624   */
+  0x00
+    /* "#utility.yul":646:670   */
+  tag_23
+    /* "#utility.yul":664:669   */
+  dup3
+    /* "#utility.yul":646:670   */
+  tag_11
+  jump	// in
+tag_23:
+    /* "#utility.yul":635:670   */
+  swap1
+  pop
+    /* "#utility.yul":568:676   */
+  swap2
+  swap1
+  pop
+  jump	// out
+    /* "#utility.yul":682:828   */
+tag_13:
+    /* "#utility.yul":767:803   */
+  tag_25
+    /* "#utility.yul":797:802   */
+  dup2
+    /* "#utility.yul":767:803   */
+  tag_12
+  jump	// in
+tag_25:
+    /* "#utility.yul":760:765   */
+  dup2
+    /* "#utility.yul":757:804   */
+  eq
+    /* "#utility.yul":747:822   */
+  tag_26
+  jumpi
+    /* "#utility.yul":818:819   */
+  0x00
+    /* "#utility.yul":815:816   */
+  dup1
+    /* "#utility.yul":808:820   */
+  revert
+    /* "#utility.yul":747:822   */
+tag_26:
+    /* "#utility.yul":682:828   */
+  pop
+  jump	// out
+    /* "#utility.yul":834:1001   */
+tag_14:
+    /* "#utility.yul":903:908   */
+  0x00
+    /* "#utility.yul":934:940   */
+  dup2
+    /* "#utility.yul":928:941   */
+  mload
+    /* "#utility.yul":919:941   */
+  swap1
+  pop
+    /* "#utility.yul":950:995   */
+  tag_28
+    /* "#utility.yul":989:994   */
+  dup2
+    /* "#utility.yul":950:995   */
+  tag_13
+  jump	// in
+tag_28:
+    /* "#utility.yul":834:1001   */
+  swap3
+  swap2
+  pop
+  pop
+  jump	// out
+    /* "#utility.yul":1007:1382   */
+tag_3:
+    /* "#utility.yul":1089:1095   */
+  0x00
+    /* "#utility.yul":1138:1140   */
+  0x20
+    /* "#utility.yul":1126:1135   */
+  dup3
+    /* "#utility.yul":1117:1124   */
+  dup5
+    /* "#utility.yul":1113:1136   */
+  sub
+    /* "#utility.yul":1109:1141   */
+  slt
+    /* "#utility.yul":1106:1225   */
+  iszero
+  tag_30
+  jumpi
+    /* "#utility.yul":1144:1223   */
+  tag_31
+  tag_8
+  jump	// in
+tag_31:
+    /* "#utility.yul":1106:1225   */
+tag_30:
+    /* "#utility.yul":1264:1265   */
+  0x00
+    /* "#utility.yul":1289:1365   */
+  tag_32
+    /* "#utility.yul":1357:1364   */
+  dup5
+    /* "#utility.yul":1348:1354   */
+  dup3
+    /* "#utility.yul":1337:1346   */
+  dup6
+    /* "#utility.yul":1333:1355   */
+  add
+    /* "#utility.yul":1289:1365   */
+  tag_14
+  jump	// in
+tag_32:
+    /* "#utility.yul":1279:1365   */
+  swap2
+  pop
+    /* "#utility.yul":1235:1375   */
+  pop
+    /* "#utility.yul":1007:1382   */
+  swap3
+  swap2
+  pop
+  pop
+  jump	// out
+    /* "contracts/example.sol":664:962  contract Wallet {... */
+tag_6:
+  dataSize(sub_0)
+  dup1
+  dataOffset(sub_0)
+  0x00
+  codecopy
+  0x00
+  return
+stop
+
+sub_0: assembly {
+        /* "contracts/example.sol":664:962  contract Wallet {... */
+      mstore(0x40, 0x80)
+      callvalue
+      dup1
+      iszero
+      tag_1
+      jumpi
+      0x00
+      dup1
+      revert
+    tag_1:
+      pop
+      jumpi(tag_2, lt(calldatasize, 0x04))
+      shr(0xe0, calldataload(0x00))
+      dup1
+      0x66829b16
+      eq
+      tag_3
+      jumpi
+      dup1
+      0xabea22cc
+      eq
+      tag_4
+      jumpi
+      dup1
+      0xfc0c546a
+      eq
+      tag_5
+      jumpi
+    tag_2:
+      0x00
+      dup1
+      revert
+        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+    tag_3:
+      tag_6
+      0x04
+      dup1
+      calldatasize
+      sub
+      dup2
+      add
+      swap1
+      tag_7
+      swap2
+      swap1
+      tag_8
+      jump	// in
+    tag_7:
+      tag_9
+      jump	// in
+    tag_6:
+      stop
+        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+    tag_4:
+      tag_10
+      0x04
+      dup1
+      calldatasize
+      sub
+      dup2
+      add
+      swap1
+      tag_11
+      swap2
+      swap1
+      tag_12
+      jump	// in
+    tag_11:
+      tag_13
+      jump	// in
+    tag_10:
+      stop
+        /* "contracts/example.sol":686:705  IToken public token */
+    tag_5:
+      tag_14
+      tag_15
+      jump	// in
+    tag_14:
+      mload(0x40)
+      tag_16
+      swap2
+      swap1
+      tag_17
+      jump	// in
+    tag_16:
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      return
+        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+    tag_9:
+        /* "contracts/example.sol":945:953  newToken */
+      dup1
+        /* "contracts/example.sol":937:942  token */
+      0x00
+      dup1
+        /* "contracts/example.sol":937:953  token = newToken */
+      0x0100
+      exp
+      dup2
+      sload
+      dup2
+      0xffffffffffffffffffffffffffffffffffffffff
+      mul
+      not
+      and
+      swap1
+      dup4
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      mul
+      or
+      swap1
+      sstore
+      pop
+        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+      pop
+      jump	// out
+        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+    tag_13:
+        /* "contracts/example.sol":843:848  token */
+      0x00
+      dup1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+        /* "contracts/example.sol":843:857  token.transfer */
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      0xa9059cbb
+        /* "contracts/example.sol":858:860  to */
+      dup4
+        /* "contracts/example.sol":862:868  amount */
+      dup4
+        /* "contracts/example.sol":843:869  token.transfer(to, amount) */
+      mload(0x40)
+      dup4
+      0xffffffff
+      and
+      0xe0
+      shl
+      dup2
+      mstore
+      0x04
+      add
+      tag_20
+      swap3
+      swap2
+      swap1
+      tag_21
+      jump	// in
+    tag_20:
+      0x00
+      mload(0x40)
+      dup1
+      dup4
+      sub
+      dup2
+      0x00
+      dup8
+      dup1
+      extcodesize
+      iszero
+      dup1
+      iszero
+      tag_22
+      jumpi
+      0x00
+      dup1
+      revert
+    tag_22:
+      pop
+      gas
+      call
+      iszero
+      dup1
+      iszero
+      tag_24
+      jumpi
+      returndatasize
+      0x00
+      dup1
+      returndatacopy
+      revert(0x00, returndatasize)
+    tag_24:
+      pop
+      pop
+      pop
+      pop
+        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+      pop
+      pop
+      jump	// out
+        /* "contracts/example.sol":686:705  IToken public token */
+    tag_15:
+      0x00
+      dup1
+      sload
+      swap1
+      0x0100
+      exp
+      swap1
+      div
+      0xffffffffffffffffffffffffffffffffffffffff
+      and
+      dup2
+      jump	// out
+        /* "#utility.yul":88:205   */
+    tag_26:
+        /* "#utility.yul":197:198   */
+      0x00
+        /* "#utility.yul":194:195   */
+      dup1
+        /* "#utility.yul":187:199   */
+      revert
+        /* "#utility.yul":334:460   */
+    tag_28:
+        /* "#utility.yul":371:378   */
+      0x00
+        /* "#utility.yul":411:453   */
+      0xffffffffffffffffffffffffffffffffffffffff
+        /* "#utility.yul":404:409   */
+      dup3
+        /* "#utility.yul":400:454   */
+      and
+        /* "#utility.yul":389:454   */
+      swap1
+      pop
+        /* "#utility.yul":334:460   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":466:562   */
+    tag_29:
+        /* "#utility.yul":503:510   */
+      0x00
+        /* "#utility.yul":532:556   */
+      tag_51
+        /* "#utility.yul":550:555   */
+      dup3
+        /* "#utility.yul":532:556   */
+      tag_28
+      jump	// in
+    tag_51:
+        /* "#utility.yul":521:556   */
+      swap1
+      pop
+        /* "#utility.yul":466:562   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":568:676   */
+    tag_30:
+        /* "#utility.yul":617:624   */
+      0x00
+        /* "#utility.yul":646:670   */
+      tag_53
+        /* "#utility.yul":664:669   */
+      dup3
+        /* "#utility.yul":646:670   */
+      tag_29
+      jump	// in
+    tag_53:
+        /* "#utility.yul":635:670   */
+      swap1
+      pop
+        /* "#utility.yul":568:676   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":682:828   */
+    tag_31:
+        /* "#utility.yul":767:803   */
+      tag_55
+        /* "#utility.yul":797:802   */
+      dup2
+        /* "#utility.yul":767:803   */
+      tag_30
+      jump	// in
+    tag_55:
+        /* "#utility.yul":760:765   */
+      dup2
+        /* "#utility.yul":757:804   */
+      eq
+        /* "#utility.yul":747:822   */
+      tag_56
+      jumpi
+        /* "#utility.yul":818:819   */
+      0x00
+        /* "#utility.yul":815:816   */
+      dup1
+        /* "#utility.yul":808:820   */
+      revert
+        /* "#utility.yul":747:822   */
+    tag_56:
+        /* "#utility.yul":682:828   */
+      pop
+      jump	// out
+        /* "#utility.yul":834:997   */
+    tag_32:
+        /* "#utility.yul":892:897   */
+      0x00
+        /* "#utility.yul":930:936   */
+      dup2
+        /* "#utility.yul":917:937   */
+      calldataload
+        /* "#utility.yul":908:937   */
+      swap1
+      pop
+        /* "#utility.yul":946:991   */
+      tag_58
+        /* "#utility.yul":985:990   */
+      dup2
+        /* "#utility.yul":946:991   */
+      tag_31
+      jump	// in
+    tag_58:
+        /* "#utility.yul":834:997   */
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":1003:1356   */
+    tag_8:
+        /* "#utility.yul":1074:1080   */
+      0x00
+        /* "#utility.yul":1123:1125   */
+      0x20
+        /* "#utility.yul":1111:1120   */
+      dup3
+        /* "#utility.yul":1102:1109   */
+      dup5
+        /* "#utility.yul":1098:1121   */
+      sub
+        /* "#utility.yul":1094:1126   */
+      slt
+        /* "#utility.yul":1091:1210   */
+      iszero
+      tag_60
+      jumpi
+        /* "#utility.yul":1129:1208   */
+      tag_61
+      tag_26
+      jump	// in
+    tag_61:
+        /* "#utility.yul":1091:1210   */
+    tag_60:
+        /* "#utility.yul":1249:1250   */
+      0x00
+        /* "#utility.yul":1274:1339   */
+      tag_62
+        /* "#utility.yul":1331:1338   */
+      dup5
+        /* "#utility.yul":1322:1328   */
+      dup3
+        /* "#utility.yul":1311:1320   */
+      dup6
+        /* "#utility.yul":1307:1329   */
+      add
+        /* "#utility.yul":1274:1339   */
+      tag_32
+      jump	// in
+    tag_62:
+        /* "#utility.yul":1264:1339   */
+      swap2
+      pop
+        /* "#utility.yul":1220:1349   */
+      pop
+        /* "#utility.yul":1003:1356   */
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":1362:1484   */
+    tag_33:
+        /* "#utility.yul":1435:1459   */
+      tag_64
+        /* "#utility.yul":1453:1458   */
+      dup2
+        /* "#utility.yul":1435:1459   */
+      tag_29
+      jump	// in
+    tag_64:
+        /* "#utility.yul":1428:1433   */
+      dup2
+        /* "#utility.yul":1425:1460   */
+      eq
+        /* "#utility.yul":1415:1478   */
+      tag_65
+      jumpi
+        /* "#utility.yul":1474:1475   */
+      0x00
+        /* "#utility.yul":1471:1472   */
+      dup1
+        /* "#utility.yul":1464:1476   */
+      revert
+        /* "#utility.yul":1415:1478   */
+    tag_65:
+        /* "#utility.yul":1362:1484   */
+      pop
+      jump	// out
+        /* "#utility.yul":1490:1629   */
+    tag_34:
+        /* "#utility.yul":1536:1541   */
+      0x00
+        /* "#utility.yul":1574:1580   */
+      dup2
+        /* "#utility.yul":1561:1581   */
+      calldataload
+        /* "#utility.yul":1552:1581   */
+      swap1
+      pop
+        /* "#utility.yul":1590:1623   */
+      tag_67
+        /* "#utility.yul":1617:1622   */
+      dup2
+        /* "#utility.yul":1590:1623   */
+      tag_33
+      jump	// in
+    tag_67:
+        /* "#utility.yul":1490:1629   */
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":1635:1712   */
+    tag_35:
+        /* "#utility.yul":1672:1679   */
+      0x00
+        /* "#utility.yul":1701:1706   */
+      dup2
+        /* "#utility.yul":1690:1706   */
+      swap1
+      pop
+        /* "#utility.yul":1635:1712   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":1718:1840   */
+    tag_36:
+        /* "#utility.yul":1791:1815   */
+      tag_70
+        /* "#utility.yul":1809:1814   */
+      dup2
+        /* "#utility.yul":1791:1815   */
+      tag_35
+      jump	// in
+    tag_70:
+        /* "#utility.yul":1784:1789   */
+      dup2
+        /* "#utility.yul":1781:1816   */
+      eq
+        /* "#utility.yul":1771:1834   */
+      tag_71
+      jumpi
+        /* "#utility.yul":1830:1831   */
+      0x00
+        /* "#utility.yul":1827:1828   */
+      dup1
+        /* "#utility.yul":1820:1832   */
+      revert
+        /* "#utility.yul":1771:1834   */
+    tag_71:
+        /* "#utility.yul":1718:1840   */
+      pop
+      jump	// out
+        /* "#utility.yul":1846:1985   */
+    tag_37:
+        /* "#utility.yul":1892:1897   */
+      0x00
+        /* "#utility.yul":1930:1936   */
+      dup2
+        /* "#utility.yul":1917:1937   */
+      calldataload
+        /* "#utility.yul":1908:1937   */
+      swap1
+      pop
+        /* "#utility.yul":1946:1979   */
+      tag_73
+        /* "#utility.yul":1973:1978   */
+      dup2
+        /* "#utility.yul":1946:1979   */
+      tag_36
+      jump	// in
+    tag_73:
+        /* "#utility.yul":1846:1985   */
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":1991:2465   */
+    tag_12:
+        /* "#utility.yul":2059:2065   */
+      0x00
+        /* "#utility.yul":2067:2073   */
+      dup1
+        /* "#utility.yul":2116:2118   */
+      0x40
+        /* "#utility.yul":2104:2113   */
+      dup4
+        /* "#utility.yul":2095:2102   */
+      dup6
+        /* "#utility.yul":2091:2114   */
+      sub
+        /* "#utility.yul":2087:2119   */
+      slt
+        /* "#utility.yul":2084:2203   */
+      iszero
+      tag_75
+      jumpi
+        /* "#utility.yul":2122:2201   */
+      tag_76
+      tag_26
+      jump	// in
+    tag_76:
+        /* "#utility.yul":2084:2203   */
+    tag_75:
+        /* "#utility.yul":2242:2243   */
+      0x00
+        /* "#utility.yul":2267:2320   */
+      tag_77
+        /* "#utility.yul":2312:2319   */
+      dup6
+        /* "#utility.yul":2303:2309   */
+      dup3
+        /* "#utility.yul":2292:2301   */
+      dup7
+        /* "#utility.yul":2288:2310   */
+      add
+        /* "#utility.yul":2267:2320   */
+      tag_34
+      jump	// in
+    tag_77:
+        /* "#utility.yul":2257:2320   */
+      swap3
+      pop
+        /* "#utility.yul":2213:2330   */
+      pop
+        /* "#utility.yul":2369:2371   */
+      0x20
+        /* "#utility.yul":2395:2448   */
+      tag_78
+        /* "#utility.yul":2440:2447   */
+      dup6
+        /* "#utility.yul":2431:2437   */
+      dup3
+        /* "#utility.yul":2420:2429   */
+      dup7
+        /* "#utility.yul":2416:2438   */
+      add
+        /* "#utility.yul":2395:2448   */
+      tag_37
+      jump	// in
+    tag_78:
+        /* "#utility.yul":2385:2448   */
+      swap2
+      pop
+        /* "#utility.yul":2340:2458   */
+      pop
+        /* "#utility.yul":1991:2465   */
+      swap3
+      pop
+      swap3
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":2471:2531   */
+    tag_38:
+        /* "#utility.yul":2499:2502   */
+      0x00
+        /* "#utility.yul":2520:2525   */
+      dup2
+        /* "#utility.yul":2513:2525   */
+      swap1
+      pop
+        /* "#utility.yul":2471:2531   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":2537:2679   */
+    tag_39:
+        /* "#utility.yul":2587:2596   */
+      0x00
+        /* "#utility.yul":2620:2673   */
+      tag_81
+        /* "#utility.yul":2638:2672   */
+      tag_82
+        /* "#utility.yul":2647:2671   */
+      tag_83
+        /* "#utility.yul":2665:2670   */
+      dup5
+        /* "#utility.yul":2647:2671   */
+      tag_28
+      jump	// in
+    tag_83:
+        /* "#utility.yul":2638:2672   */
+      tag_38
+      jump	// in
+    tag_82:
+        /* "#utility.yul":2620:2673   */
+      tag_28
+      jump	// in
+    tag_81:
+        /* "#utility.yul":2607:2673   */
+      swap1
+      pop
+        /* "#utility.yul":2537:2679   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":2685:2811   */
+    tag_40:
+        /* "#utility.yul":2735:2744   */
+      0x00
+        /* "#utility.yul":2768:2805   */
+      tag_85
+        /* "#utility.yul":2799:2804   */
+      dup3
+        /* "#utility.yul":2768:2805   */
+      tag_39
+      jump	// in
+    tag_85:
+        /* "#utility.yul":2755:2805   */
+      swap1
+      pop
+        /* "#utility.yul":2685:2811   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":2817:2955   */
+    tag_41:
+        /* "#utility.yul":2879:2888   */
+      0x00
+        /* "#utility.yul":2912:2949   */
+      tag_87
+        /* "#utility.yul":2943:2948   */
+      dup3
+        /* "#utility.yul":2912:2949   */
+      tag_40
+      jump	// in
+    tag_87:
+        /* "#utility.yul":2899:2949   */
+      swap1
+      pop
+        /* "#utility.yul":2817:2955   */
+      swap2
+      swap1
+      pop
+      jump	// out
+        /* "#utility.yul":2961:3116   */
+    tag_42:
+        /* "#utility.yul":3060:3109   */
+      tag_89
+        /* "#utility.yul":3103:3108   */
+      dup2
+        /* "#utility.yul":3060:3109   */
+      tag_41
+      jump	// in
+    tag_89:
+        /* "#utility.yul":3055:3058   */
+      dup3
+        /* "#utility.yul":3048:3110   */
+      mstore
+        /* "#utility.yul":2961:3116   */
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":3122:3368   */
+    tag_17:
+        /* "#utility.yul":3227:3231   */
+      0x00
+        /* "#utility.yul":3265:3267   */
+      0x20
+        /* "#utility.yul":3254:3263   */
+      dup3
+        /* "#utility.yul":3250:3268   */
+      add
+        /* "#utility.yul":3242:3268   */
+      swap1
+      pop
+        /* "#utility.yul":3278:3361   */
+      tag_91
+        /* "#utility.yul":3358:3359   */
+      0x00
+        /* "#utility.yul":3347:3356   */
+      dup4
+        /* "#utility.yul":3343:3360   */
+      add
+        /* "#utility.yul":3334:3340   */
+      dup5
+        /* "#utility.yul":3278:3361   */
+      tag_42
+      jump	// in
+    tag_91:
+        /* "#utility.yul":3122:3368   */
+      swap3
+      swap2
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":3374:3492   */
+    tag_43:
+        /* "#utility.yul":3461:3485   */
+      tag_93
+        /* "#utility.yul":3479:3484   */
+      dup2
+        /* "#utility.yul":3461:3485   */
+      tag_29
+      jump	// in
+    tag_93:
+        /* "#utility.yul":3456:3459   */
+      dup3
+        /* "#utility.yul":3449:3486   */
+      mstore
+        /* "#utility.yul":3374:3492   */
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":3498:3616   */
+    tag_44:
+        /* "#utility.yul":3585:3609   */
+      tag_95
+        /* "#utility.yul":3603:3608   */
+      dup2
+        /* "#utility.yul":3585:3609   */
+      tag_35
+      jump	// in
+    tag_95:
+        /* "#utility.yul":3580:3583   */
+      dup3
+        /* "#utility.yul":3573:3610   */
+      mstore
+        /* "#utility.yul":3498:3616   */
+      pop
+      pop
+      jump	// out
+        /* "#utility.yul":3622:3954   */
+    tag_21:
+        /* "#utility.yul":3743:3747   */
+      0x00
+        /* "#utility.yul":3781:3783   */
+      0x40
+        /* "#utility.yul":3770:3779   */
+      dup3
+        /* "#utility.yul":3766:3784   */
+      add
+        /* "#utility.yul":3758:3784   */
+      swap1
+      pop
+        /* "#utility.yul":3794:3865   */
+      tag_97
+        /* "#utility.yul":3862:3863   */
+      0x00
+        /* "#utility.yul":3851:3860   */
+      dup4
+        /* "#utility.yul":3847:3864   */
+      add
+        /* "#utility.yul":3838:3844   */
+      dup6
+        /* "#utility.yul":3794:3865   */
+      tag_43
+      jump	// in
+    tag_97:
+        /* "#utility.yul":3875:3947   */
+      tag_98
+        /* "#utility.yul":3943:3945   */
+      0x20
+        /* "#utility.yul":3932:3941   */
+      dup4
+        /* "#utility.yul":3928:3946   */
+      add
+        /* "#utility.yul":3919:3925   */
+      dup5
+        /* "#utility.yul":3875:3947   */
+      tag_44
+      jump	// in
+    tag_98:
+        /* "#utility.yul":3622:3954   */
+      swap4
+      swap3
+      pop
+      pop
+      pop
+      jump	// out
+
+    auxdata: 0xa2646970667358221220b300f02ecd47e94ad9e4edadb6497a3c7b1c7a015d8baad24fa573149be52bb064736f6c637829302e382e32342d646576656c6f702e323032332e31322e31392b636f6d6d69742e3932663338336438005a
+}
