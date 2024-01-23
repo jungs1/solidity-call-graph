@@ -1,11 +1,22 @@
-# Solidity CHA and RTA
+# Solidity Static Code Analyzer
 
-This code offers implementations of Class Hierarchy Analysis (CHA) and Rapid Type Analysis (RTA) for Solidity smart contracts by analyzing the Abstract Syntax Tree (AST) of Solidity contracts. It's important to note that these are not full implementations but rather simplified versions designed for exploration and educational purposes. They serve as a practical guide for those looking to understand how CHA and RTA work in the context of Solidity and to experiment with these analysis techniques in a more controlled environment.
+# TODOs
+
+- [x] Class Hierachy Analysis (CHA)
+- [x] Call Graph using Class Hierachy Analysis (CHA)
+- [x] Call Graph using Rapid Type Analysis (RTA)
+- [ ] Call Graph using Hybrid Type Analysis (XTA)
+- [ ] Call Graph using Variable Type Analysis (VTA)
+- [x] Control Flow Analysis
+- [ ] Data Flow Analysis
+- [ ] Taint Analysis
+- [ ] Symbolic Execution
+- [ ] ...many more
 
 ## Prerequisites
 
-- Solidity Compiler (solc) version 0.8.24
-- Node.js version 20.10.0
+- solc 0.8.24
+- graphviz 0.20.1
 
 ## Compiling Solidity Contracts
 
@@ -15,86 +26,18 @@ Use the following command to compile Solidity contracts and generate the require
 solc -o output --bin --ast-compact-json --asm contracts/example.sol
 ```
 
-# CHA and RTA in Action: A Solidity Example
+#### CHA
 
-CHA and RTA are analysis methodologies to generate call graphs.
-Consider a Solidity system with several contracts: `IToken`, `Bitcoin`, `Ethereum`, `TokenFactory`, and `Wallet`. `Bitcoin` and `Ethereum` implement the `IToken` interface. `Wallet` interacts with an `IToken`, and `TokenFactory` dynamically creates instances of `Bitcoin` or `Ethereum`.
+![CHA](./cha.png "Class Hierachy Graph"){}
 
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+#### Call Graph CHA
 
-interface IToken {
-    function transfer(address to, uint256 amount) external;
-}
+![Call Graph CHA](./call-graph-cha.png "Call Graph CHA"){}
 
-contract Bitcoin is IToken {
-    function transfer(address to, uint256 amount) external override {
-        // Bitcoin transfer implementation
-    }
-}
+#### Call Graph RTA
 
-contract Ethereum is IToken {
-    function transfer(address to, uint256 amount) external override {
-        // Ethereum transfer implementation
-    }
-}
+![Call Graph RTA](./call-graph-rta.png "Call Graph RTA"){}
 
-contract TokenFactory {
-    function createToken(bool isBitcoin) public returns (IToken) {
-        if (isBitcoin) {
-            return new Bitcoin();
-        } else {
-            return new Ethereum();
-        }
-    }
-}
+#### Control Flow Analysis
 
-contract Wallet {
-    IToken public token;
-
-    constructor(IToken _token) {
-        token = _token;
-    }
-
-    function makeTransfer(address to, uint256 amount) public {
-        token.transfer(to, amount);
-    }
-
-    function changeToken(IToken newToken) public {
-        token = newToken;
-    }
-}
-```
-
-### CHA Analysis Result
-
-```js
-{
-  'IToken.transfer': Set(0) {},
-  'Bitcoin.transfer': Set(0) {},
-  'Ethereum.transfer': Set(0) {},
-  'TokenFactory.createToken': Set(0) {},
-  'Wallet.makeTransfer': Set(3) { 'IToken.transfer', 'Bitcoin.transfer', 'Ethereum.transfer' },
-  'Wallet.changeToken': Set(0) {}
-}
-
-```
-
-## RTA Analysis Result
-
-```js
-{
-  'IToken.transfer': Set(0) {},
-  'Bitcoin.transfer': Set(0) {},
-  'Ethereum.transfer': Set(0) {},
-  'TokenFactory.createToken': Set(0) {},
-  'Wallet.makeTransfer': Set(2) { 'Bitcoin.transfer', 'Ethereum.transfer' },
-  'Wallet.changeToken': Set(0) {}
-}
-
-```
-
-CHA is known for its **soundness**, covering all possible interactions, including paths not executed at runtime. This comprehensive approach, however, may introduce complexity by including non-executed paths.
-
-In contrast, RTA is valued for its **precision**, focusing on instantiated contracts for a more targeted and practical analysis. While offering a concise view, it might miss interactions involving non-instantiated contracts. The choice between CHA's comprehensive coverage and RTA's focused analysis depends on the specific needs of the analysis, whether it be a complete overview or an assessment of probable runtime behavior.
+![Data Flow Analysis](./cfg.png "Control Flow Graph"){}
