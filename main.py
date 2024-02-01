@@ -1,13 +1,23 @@
-import json
-from ast_parser import ASTParser
+from src.parsers.ast_parser import ASTParser
+from src.analyzers.class_hierarchy_analyzer import ClassHierarchyAnalyzer
+from src.analyzers.call_graph_analyzer import CallGraphAnalyzer
+from src.analyzers.control_flow_graph_analyzer import ControlFlowGraphAnalyzer
 
 if __name__ == "__main__":
-    with open("output/example.sol_json.ast") as f:
-        data = json.load(f)
+    # ast_file_path = "output/example.sol_json.ast"
+    file_path = "contracts/HelloWorld.sol"
+    parser = ASTParser(file_path)
+    parser.parse()
 
-    with open("contracts/example.sol", "r") as file:
-        source_code = file.read()
-    parser = ASTParser(data, source_code)
-    # parser.control_flow_graph_analyzer.analyze()
-    parser.class_hierarchy_analyzer.analyze()
-    parser.call_graph_analyzer.analyze()
+    # CHA
+    class_hierarchy_analyzer = ClassHierarchyAnalyzer(parser)
+    class_hierarchy_analyzer.analyze()
+
+    # Call Graph
+    call_graph_analyzer = CallGraphAnalyzer(parser)
+    call_graph_analyzer.analyze("RTA")
+    call_graph_analyzer.analyze("CHA")
+
+    # Control Flow Graph
+    control_flow_graph_analyzer = ControlFlowGraphAnalyzer(parser)
+    control_flow_graph_analyzer.analyze()

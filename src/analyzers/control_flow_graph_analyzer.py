@@ -1,14 +1,82 @@
-from control_flow_graph import ControlFlowGraph
-
+from src.analyzers.abstract_analyzer import AbstractAnalyzer
 from graphviz import Digraph
 
 
-class AnalysisModule:
-    def analyze(self):
-        raise NotImplementedError
+class CFGNode:
+    """Represents a node in the Control Flow Graph."""
+
+    def __init__(self, node_id, node_type):
+        self.node_id = node_id
+        self.node_type = node_type
+        self.statements = []
+        self.incoming_edges = []  # List of tuples (node, annotation)
+        self.outgoing_edges = []  # List of tuples (node, annotation)
+
+    def add_statement(self, statement):
+        self.statements.append(statement)
+
+    def add_incoming_edge(self, node, annotation=None):
+        self.incoming_edges.append((node, annotation))
+
+    def add_outgoing_edge(self, node, annotation=None):
+        self.outgoing_edges.append((node, annotation))
+
+    def format_label(self):
+        # Create a human-readable label for the node
+        label_parts = [f"Node: {self.node_id} ({self.node_type})"]
+        label_parts.extend(self.statements)
+        return "\n".join(label_parts)
 
 
-class ControlFlowGraphAnalyzer(AnalysisModule):
+class ControlFlowGraph:
+    def __init__(self):
+        self.nodes = {}
+        self.function_nodes = {}
+
+    def connect_function_call(self, caller_node, function_id):
+        # Connect the caller node to the entry of the called function
+        entry_node, exit_node = self.function_nodes.get(function_id, (None, None))
+        if entry_node:
+            self.connect_nodes(caller_node, entry_node)
+            # Assuming the caller node will receive control back after the function call
+            return_node = self.add_node(f"return_from_{function_id}")
+            self.connect_nodes(exit_node, return_node)
+            return return_node
+        return None
+
+    def add_node(self, node_id, node_type):
+        if type(node_id) == int:
+            node_id = str(node_id)
+        node = CFGNode(node_id=node_id, node_type=node_type)
+        self.nodes[node_id] = node
+        return node
+
+    def find_node(self, node_id):
+        return self.nodes.get(node_id, None)
+
+    def add_function_entry_exit(self, function_id, function_name):
+        # Create entry and exit nodes for a function
+        entry_node = self.add_node(
+            f"entry_{function_id}_{function_name}", "FunctionEntry"
+        )
+        exit_node = self.add_node(f"exit_{function_id}_{function_name}", "FunctionExit")
+        self.function_nodes[f"{function_id}_{function_name}"] = (entry_node, exit_node)
+        return entry_node, exit_node
+
+    def connect_nodes(self, from_node, to_node, annotation=None):
+        from_node.add_outgoing_edge(to_node, annotation)
+        to_node.add_incoming_edge(from_node, annotation)
+
+    def pretty_print_nodes(self):
+        for node_id, node in self.nodes.items():
+            print(f"Node: {node_id} {node}")
+            print(f"Statements: {node.statements}")
+            print(f"Incoming edges: {node.incoming_edges}")
+            print(f"Outgoing edges: {node.outgoing_edges}")
+            print("--------------------------")
+
+
+class ControlFlowGraphAnalyzer(AbstractAnalyzer):
     def __init__(self, ast_parser):
         self.ast_parser = ast_parser
         self.cfg = ControlFlowGraph()
@@ -61,6 +129,7 @@ class ControlFlowGraphAnalyzer(AnalysisModule):
 
     def get_source_snippet(self, src):
         start, length = map(int, src.split(":")[:2])
+
         return self.ast_parser.source_code[start : start + length]
 
     def parse(self):
@@ -82,7 +151,7 @@ class ControlFlowGraphAnalyzer(AnalysisModule):
         body_node = function_node.get("body")
         if body_node:
             end_node = self.parse_block(body_node, entry_node)
-        self.cfg.connect_nodes(end_node, exit_node)
+            self.cfg.connect_nodes(end_node, exit_node)
 
     def parse_block(self, block_node, parent_node):
         prev_node = parent_node
@@ -355,264 +424,3 @@ class ControlFlowGraphAnalyzer(AnalysisModule):
         self.cfg.connect_nodes(right_node, convergent_node)
 
         return convergent_node
-
-
-class ClassHierarchyAnalyzer(AnalysisModule):
-    def __init__(self, ast_parser):
-        self.ast_parser = ast_parser
-
-    def visualize(self, class_hierarchy):
-        dot = Digraph(comment="Class Hierarchy Analysis")
-        for contract, funcs in class_hierarchy.items():
-            for base in funcs["baseContracts"]:
-                dot.node(base, label=base)
-                dot.edge(base, contract)
-            dot.node(contract, label=contract)
-
-        dot.render("cha", format="png", cleanup=True)
-        print(f"CHA saved as cha.png")
-
-    def analyze(self):
-        class_hierarchy = self.build_class_hierarchy(self.ast_parser.ast)
-        self.visualize(class_hierarchy)
-
-    def build_class_hierarchy(self, ast):
-        hierarchy = {}
-        for node in ast["nodes"]:
-            if node["nodeType"] == "ContractDefinition":
-                hierarchy[node["name"]] = {
-                    "baseContracts": [
-                        base["baseName"]["name"] for base in node["baseContracts"]
-                    ],
-                    "functions": [
-                        func["name"]
-                        for func in node["nodes"]
-                        if func["nodeType"] == "FunctionDefinition"
-                        and func["kind"] != "constructor"
-                    ],
-                }
-        return hierarchy
-
-    def find_function_node(self, ast, contract_name, function_name):
-        for node in ast["nodes"]:
-            if (
-                node["nodeType"] == "ContractDefinition"
-                and node["name"] == contract_name
-            ):
-                for sub_node in node["nodes"]:
-                    if (
-                        sub_node["nodeType"] == "FunctionDefinition"
-                        and sub_node["name"] == function_name
-                    ):
-                        return sub_node
-        return None
-
-    def find_function_calls(self, function_node):
-        function_calls = []
-
-        def traverse(node):
-            if node["nodeType"] == "FunctionCall":
-                function_name = self.get_function_call_name(node)
-                if function_name:
-                    function_calls.append(function_name)
-
-            for key, value in node.items():
-                if isinstance(value, dict):
-                    traverse(value)
-
-        traverse(function_node)
-        return function_calls
-
-    def get_function_call_name(self, function_call_node):
-        if "expression" in function_call_node:
-            if function_call_node["expression"]["nodeType"] == "Identifier":
-                return function_call_node["expression"]["name"]
-            elif function_call_node["expression"]["nodeType"] == "MemberAccess":
-                return function_call_node["expression"]["memberName"]
-        return None
-
-    def resolve_function_calls(self, called_func, class_hierarchy):
-        target_functions = set()
-
-        for contract_name, contract_info in class_hierarchy.items():
-            if called_func in contract_info["functions"]:
-                target_functions.add(f"{contract_name}.{called_func}")
-
-            for base_contract_name in contract_info["baseContracts"]:
-                if called_func in class_hierarchy[base_contract_name]["functions"]:
-                    target_functions.add(f"{base_contract_name}.{called_func}")
-
-        return target_functions
-
-    def traverse_ast(self, ast, callback):
-        def traverse(node):
-            callback(node)
-            for key, value in node.items():
-                if isinstance(value, dict):
-                    traverse(value)
-
-        traverse(ast)
-
-
-class CallGraphAnalyzer(AnalysisModule):
-    def __init__(self, ast_parser, call_graph_type="CHA"):
-        self.ast_parser = ast_parser
-        self.class_hierarchy_analyzer = ClassHierarchyAnalyzer(ast_parser)
-        self.call_graph_type = call_graph_type  # CHA or RTA
-
-    def analyze(self):
-        class_hierarchy = self.class_hierarchy_analyzer.build_class_hierarchy(
-            self.ast_parser.ast
-        )
-
-        if self.call_graph_type == "RTA":
-            instantiated_contracts = self.identify_instantiated_contracts(
-                self.ast_parser.ast
-            )
-            call_graph = self.build_rta_call_graph(
-                class_hierarchy, instantiated_contracts, self.ast_parser.ast
-            )
-
-        else:
-            call_graph = self.build_cha_call_graph(class_hierarchy, self.ast_parser.ast)
-        self.visualize(call_graph)
-
-    def identify_instantiated_contracts(self, ast):
-        instantiated_contracts = set()
-
-        def traverse(node):
-            if "nodeType" in node and node["nodeType"] == "NewExpression":
-                contract_name = node.get("typeName").get("pathNode").get("name")
-                if contract_name:
-                    instantiated_contracts.add(contract_name)
-
-            for key, value in node.items():
-                if isinstance(value, dict):
-                    traverse(value)
-                elif isinstance(value, list):
-                    for item in value:
-                        if isinstance(item, dict):
-                            traverse(item)
-
-        traverse(ast)
-        return instantiated_contracts
-
-    def build_rta_call_graph(self, class_hierarchy, instantiated_contracts, ast):
-        call_graph = {}
-        for contract_name, contract_info in class_hierarchy.items():
-            for func in contract_info["functions"]:
-                func_key = f"{contract_name}.{func}"
-                call_graph[func_key] = set()
-
-                function_node = self.find_function_node(ast, contract_name, func)
-                if function_node:
-                    called_functions = self.find_function_calls(function_node)
-                    for called_func in called_functions:
-                        target_functions = self.resolve_function_calls(
-                            called_func, class_hierarchy
-                        )
-                        for target_func in target_functions:
-                            # Only add to the call graph if the target function's class is instantiated
-                            target_class = target_func.split(".")[0]
-                            if target_class in instantiated_contracts:
-                                call_graph[func_key].add(target_func)
-
-        return call_graph
-
-    def build_cha_call_graph(self, class_hierarchy, ast):
-        call_graph = {}
-        for contract_name, contract_info in class_hierarchy.items():
-            for func in contract_info["functions"]:
-                func_key = f"{contract_name}.{func}"
-                call_graph[func_key] = self.analyze_function(
-                    ast, contract_name, func, class_hierarchy
-                )
-        return call_graph
-
-    def visualize(self, call_graph):
-        dot = Digraph(comment="Call Graph Analysis")
-        for func_key, func_calls in call_graph.items():
-            dot.node(func_key, label=func_key)
-            for called_func in func_calls:
-                dot.edge(func_key, called_func)
-        if self.call_graph_type == "RTA":
-            filename = "call-graph-rta"
-        else:
-            filename = "call-graph-cha"
-        dot.render(filename, format="png", cleanup=True)
-        print(f"Call Graph using {self.call_graph_type} saved as cha.png")
-
-    def resolve_function_calls(self, called_func, class_hierarchy):
-        target_functions = set()
-
-        for contract_name, contract_info in class_hierarchy.items():
-            if called_func in contract_info["functions"]:
-                target_functions.add(f"{contract_name}.{called_func}")
-
-            for base_contract_name in contract_info["baseContracts"]:
-                if called_func in class_hierarchy[base_contract_name]["functions"]:
-                    target_functions.add(f"{base_contract_name}.{called_func}")
-
-        return target_functions
-
-    def analyze_function(self, ast, contract_name, func, class_hierarchy):
-        function_node = self.find_function_node(ast, contract_name, func)
-        function_calls = set()
-        if function_node:
-            for called_func in self.find_function_calls(function_node):
-                for target_func in self.resolve_function_calls(
-                    called_func, class_hierarchy
-                ):
-                    function_calls.add(target_func)
-
-        return function_calls
-
-    def find_function_node(self, ast, contract_name, function_name):
-        for node in ast["nodes"]:
-            if (
-                node["nodeType"] == "ContractDefinition"
-                and node["name"] == contract_name
-            ):
-                for sub_node in node["nodes"]:
-                    if (
-                        sub_node["nodeType"] == "FunctionDefinition"
-                        and sub_node["name"] == function_name
-                    ):
-                        return sub_node
-        return None
-
-    def get_function_call_name(self, function_call_node):
-        if "expression" in function_call_node:
-            if function_call_node["expression"]["nodeType"] == "Identifier":
-                return function_call_node["expression"]["name"]
-            elif function_call_node["expression"]["nodeType"] == "MemberAccess":
-                return function_call_node["expression"]["memberName"]
-        return None
-
-    def find_function_calls(self, function_node):
-        function_calls = []
-
-        def traverse(node):
-            function_name = self.get_function_call_name(node)
-            if function_name:
-                function_calls.append(function_name)
-
-            for key, value in node.items():
-                if isinstance(value, dict):
-                    traverse(value)
-                elif isinstance(value, list):
-                    for item in value:
-                        if isinstance(item, dict):
-                            traverse(item)
-
-        traverse(function_node)
-        return function_calls
-
-
-class ASTParser:
-    def __init__(self, ast, source_code):
-        self.ast = ast
-        self.source_code = source_code
-        self.class_hierarchy_analyzer = ClassHierarchyAnalyzer(self)
-        self.control_flow_graph_analyzer = ControlFlowGraphAnalyzer(self)
-        self.call_graph_analyzer = CallGraphAnalyzer(self)
