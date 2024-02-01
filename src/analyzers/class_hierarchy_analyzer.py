@@ -3,8 +3,8 @@ from graphviz import Digraph
 
 
 class ClassHierarchyAnalyzer(AbstractAnalyzer):
-    def __init__(self, ast_parser):
-        self.ast_parser = ast_parser
+    def __init__(self, parser):
+        self.parser = parser
 
     def visualize(self, class_hierarchy):
         dot = Digraph(comment="Class Hierarchy Analysis")
@@ -18,7 +18,7 @@ class ClassHierarchyAnalyzer(AbstractAnalyzer):
         print(f"CHA saved as cha.png")
 
     def analyze(self):
-        class_hierarchy = self.build_class_hierarchy(self.ast_parser.ast)
+        class_hierarchy = self.build_class_hierarchy(self.parser.ast)
         self.visualize(class_hierarchy)
 
     def build_class_hierarchy(self, ast):

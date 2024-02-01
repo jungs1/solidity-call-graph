@@ -4,11 +4,12 @@ pragma solidity ^0.8.0;
 contract Parent {
     string state_variable = "Hello World";
 
-    function while_loop() public view returns (string memory) {
+    function while_loop() public view returns (bool) {
         uint256 j = 0;
         while (j < 10) {
             j++;
         }
+        return 43 != 2;
     }
 
     function if_else() public view returns (string memory) {

@@ -1,40 +1,90 @@
 from src.analyzers.abstract_analyzer import AbstractAnalyzer
 from graphviz import Digraph
+from typing import Dict, Tuple, Optional, List
+
+
+class Statement:
+    def __init__(self, text: str):
+        self.text = text
+
+    def __str__(self):
+        return self.text
+
+
+class FunctionCallStatement(Statement):
+    def __init__(self, function_name: str, arguments: list):
+        self.function_name = function_name
+        self.arguments = arguments
+        arg_str = ", ".join(str(arg) for arg in arguments)
+        text = f"{function_name}({arg_str})"
+        super().__init__(text)
+
+
+class DeclarationStatement(Statement):
+    def __init__(
+        self, variable_name: str, variable_type: str, initial_value: str = None
+    ):
+        self.variable_name = variable_name
+        self.variable_type = variable_type
+        self.initial_value = initial_value
+        text = f"{variable_type} {variable_name}"
+        if initial_value is not None:
+            text += f" = {initial_value}"
+        super().__init__(text)
+
+
+"""
+An expression is a combination of one or more values, variables, operators, and function calls that the programming language interprets (according to its particular rules of precedence and of association) and computes to produce ("to return", in a stateful environment) another value. This means that expressions always produce or return a value.
+
+"""
+
+
+class ExpressionStatement(Statement):
+    def __init__(self, expression: str):
+        super().__init__(expression)
 
 
 class CFGNode:
     """Represents a node in the Control Flow Graph."""
 
     def __init__(self, node_id, node_type):
-        self.node_id = node_id
-        self.node_type = node_type
-        self.statements = []
-        self.incoming_edges = []  # List of tuples (node, annotation)
-        self.outgoing_edges = []  # List of tuples (node, annotation)
+        self.node_id: str = node_id
+        self.node_type: str = node_type
+        self.statements: List[str] = []
+        self.incoming_edges: List[Tuple["CFGNode", Optional[str]]] = []
+        self.outgoing_edges: List[Tuple["CFGNode", Optional[str]]] = []
 
     def add_statement(self, statement):
+        """Add a statement to the node's list of statements."""
         self.statements.append(statement)
 
     def add_incoming_edge(self, node, annotation=None):
+        """Add an incoming edge to the node."""
         self.incoming_edges.append((node, annotation))
 
     def add_outgoing_edge(self, node, annotation=None):
+        """Add an outgoing edge to the node."""
         self.outgoing_edges.append((node, annotation))
 
     def format_label(self):
-        # Create a human-readable label for the node
+        """Create a human-readable label for the node."""
         label_parts = [f"Node: {self.node_id} ({self.node_type})"]
-        label_parts.extend(self.statements)
+        print("labl_parts", label_parts)
+        for statement in self.statements:
+            label_parts.append(f"  {statement}")
+        # label_parts.extend(self.statements)
         return "\n".join(label_parts)
 
 
 class ControlFlowGraph:
-    def __init__(self):
-        self.nodes = {}
-        self.function_nodes = {}
+    def __init__(self) -> None:
+        self.nodes: Dict[str, CFGNode] = {}
+        self.function_nodes: Dict[str, Tuple[CFGNode, CFGNode]] = {}
 
-    def connect_function_call(self, caller_node, function_id):
-        # Connect the caller node to the entry of the called function
+    def connect_function_call(
+        self, caller_node: CFGNode, function_id: str
+    ) -> Optional[CFGNode]:
+        """Connect the caller node to the entry of the called function."""
         entry_node, exit_node = self.function_nodes.get(function_id, (None, None))
         if entry_node:
             self.connect_nodes(caller_node, entry_node)
@@ -44,18 +94,20 @@ class ControlFlowGraph:
             return return_node
         return None
 
-    def add_node(self, node_id, node_type):
+    def add_node(self, node_id: str, node_type: str) -> CFGNode:
+        """Add a new node to the control flow graph."""
         if type(node_id) == int:
             node_id = str(node_id)
-        node = CFGNode(node_id=node_id, node_type=node_type)
-        self.nodes[node_id] = node
-        return node
+        return self._create_and_add_node(node_id, node_type)
 
-    def find_node(self, node_id):
+    def find_node(self, node_id: str) -> Optional[CFGNode]:
+        """Find a node in the control flow graph by its ID."""
         return self.nodes.get(node_id, None)
 
-    def add_function_entry_exit(self, function_id, function_name):
-        # Create entry and exit nodes for a function
+    def add_function_entry_exit(
+        self, function_id: str, function_name: str
+    ) -> Tuple[CFGNode, CFGNode]:
+        """Create entry and exit nodes for a function."""
         entry_node = self.add_node(
             f"entry_{function_id}_{function_name}", "FunctionEntry"
         )
@@ -63,45 +115,60 @@ class ControlFlowGraph:
         self.function_nodes[f"{function_id}_{function_name}"] = (entry_node, exit_node)
         return entry_node, exit_node
 
-    def connect_nodes(self, from_node, to_node, annotation=None):
+    def connect_nodes(
+        self, from_node: CFGNode, to_node: CFGNode, annotation: Optional[str] = None
+    ) -> None:
+        """Connect two nodes in the control flow graph."""
         from_node.add_outgoing_edge(to_node, annotation)
         to_node.add_incoming_edge(from_node, annotation)
 
-    def pretty_print_nodes(self):
+    def _create_and_add_node(self, node_id: str, node_type: str) -> CFGNode:
+        node = CFGNode(node_id=node_id, node_type=node_type)
+        self.nodes[node_id] = node
+        return node
+
+    def pretty_print_nodes(self) -> None:
+        """Print a human-readable representation of the nodes in the graph."""
         for node_id, node in self.nodes.items():
-            print(f"Node: {node_id} {node}")
-            print(f"Statements: {node.statements}")
-            print(f"Incoming edges: {node.incoming_edges}")
-            print(f"Outgoing edges: {node.outgoing_edges}")
+            print(node.format_label())
+            print(
+                f"Incoming edges: {[(n.node_id, ann) for n, ann in node.incoming_edges]}"
+            )
+            print(
+                f"Outgoing edges: {[(n.node_id, ann) for n, ann in node.outgoing_edges]}"
+            )
             print("--------------------------")
 
 
 class ControlFlowGraphAnalyzer(AbstractAnalyzer):
-    def __init__(self, ast_parser):
-        self.ast_parser = ast_parser
+    def __init__(self, parser):
+        self.parser = parser
         self.cfg = ControlFlowGraph()
 
     def _format_node_label(self, node):
         """Format the label for a node."""
-        node_desc = node.node_type
-        statements = "\n".join(node.statements)
-        return f"{node_desc}\n{statements}"
+        node_id = node.node_id
+        node_type = node.node_type
+        statements = []
+        for statement in node.statements:
+            statements.append(str(statement))
+        statements = "\n".join(statements)
+        return f"ID: {node_id}\nNODE_TYPE: {node_type}\nSTATEMENTS: {statements}"
 
     def visualize(self, filename="cfg"):
         dot = Digraph(comment="Control Flow Graph")
         node_colors = {
             "FunctionEntry": "lightblue",
             "FunctionExit": "lightblue",
-            "IfStatement": "yellow",
-            "IfStatement Convergent": "yellow",
-            "WhileCondition": "orange",
-            "WhileBody": "orange",
-            "AfterWhile": "orange",
-            "ForInit": "green",
-            "ForCondition": "green",
-            "ForBody": "green",
-            "AfterFor": "green",
-            "ForIncrement": "green",
+            "IfStatement": "orange",
+            "IfStatement Convergent": "orange",
+            "WhileStatement": "orange",
+            "ForInit": "orange",
+            "ForCondition": "orange",
+            "ForBody": "orange",
+            "AfterFor": "orange",
+            "ForIncrement": "orange",
+            "Return": "lightgreen",
         }
         # Add nodes to the graph
         for node_id, node in self.cfg.nodes.items():
@@ -130,10 +197,10 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
     def get_source_snippet(self, src):
         start, length = map(int, src.split(":")[:2])
 
-        return self.ast_parser.source_code[start : start + length]
+        return self.parser.source_code[start : start + length]
 
     def parse(self):
-        for node in self.ast_parser.ast["nodes"]:
+        for node in self.parser.ast["nodes"]:
             if node["nodeType"] == "ContractDefinition":
                 self.parse_contract(node)
 
@@ -150,10 +217,18 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         # Parse the body of the function
         body_node = function_node.get("body")
         if body_node:
-            end_node = self.parse_block(body_node, entry_node)
+            end_node = self.parse_block(body_node, entry_node, exit_node)
             self.cfg.connect_nodes(end_node, exit_node)
 
-    def parse_block(self, block_node, parent_node):
+    def parse_block(self, block_node, parent_node, exit_node=None):
+        """
+        Parses a block of code and updates the control flow graph accordingly.
+
+        A block consists of a sequence of statements, which may include variable declarations,
+        expression statements, and control flow elements like if statements and loops.
+        This method iterates through each statement in the block and delegates to the appropriate
+        parsing method based on the statement's node type.
+        """
         prev_node = parent_node
         for statement in block_node["statements"]:
             if statement["nodeType"] == "VariableDeclarationStatement":
@@ -166,19 +241,61 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
                 prev_node = self.parse_for_loop(statement, prev_node)
             elif statement["nodeType"] == "WhileStatement":
                 prev_node = self.parse_while_loop(statement, prev_node)
+            elif statement["nodeType"] == "Return":
+                prev_node = self.parse_return_statement(statement, prev_node)
             else:
                 None
         return prev_node
 
-    def parse_variable_declaration(self, var_decl_node, parent_node):
-        code_snippet = self.get_source_snippet(var_decl_node["src"])
-        parent_node.add_statement(f"Declare: {code_snippet}")
+    def parse_variable_declaration(
+        self, var_decl_node: dict, parent_node: CFGNode
+    ) -> None:
+        variable_name = var_decl_node["declarations"][0]["name"]
+        variable_type = var_decl_node["declarations"][0]["typeName"]["name"]
+        initial_value = var_decl_node.get("initialValue", {}).get("value")
+        statement = DeclarationStatement(variable_name, variable_type, initial_value)
+        parent_node.add_statement(statement)
         return parent_node
 
     def parse_expression_statement(self, expr_stmt_node, parent_node):
-        code_snippet = self.get_source_snippet(expr_stmt_node["src"])
-        parent_node.add_statement(f"Expr: {code_snippet}")
+        expression = self.parse_expression(expr_stmt_node["expression"])
+        statement = ExpressionStatement(expression)
+        parent_node.add_statement(statement)
         return parent_node
+
+    def parse_expression(self, expr_node: dict) -> str:
+        """
+        Parses an expression AST node and returns its string representation.
+        """
+        if expr_node["nodeType"] == "BinaryOperation":
+            # Parse the left and right expressions of the binary operation
+            left_expr = self.parse_expression(expr_node["leftExpression"])
+            right_expr = self.parse_expression(expr_node["rightExpression"])
+            # Get the operator
+            operator = expr_node["operator"]
+            # Combine the left expression, operator, and right expression
+            return f"{left_expr} {operator} {right_expr}"
+        if expr_node["nodeType"] == "UnaryOperation":
+            operator = expr_node["operator"]
+            operand = self.parse_expression(expr_node["subExpression"])
+            return f"{operator}{operand}"
+        if expr_node["nodeType"] == "Assignment":
+            # Parse the left-hand side (Identifier)
+            left_hand_side = expr_node["leftHandSide"]["name"]
+            # Parse the right-hand side, which could be a Literal or another type of expression
+            right_hand_side = self.parse_expression(expr_node["rightHandSide"])
+            # Get the operator
+            operator = expr_node["operator"]
+            # Construct the assignment expression string
+            return f"{left_hand_side} {operator} {right_hand_side}"
+        elif expr_node["nodeType"] == "Literal":
+            # Directly return the literal value
+            return expr_node["value"]
+        elif expr_node["nodeType"] == "Identifier":
+            # Directly return the identifier name
+            return expr_node["name"]
+        # Add more cases to handle different types of expressions as needed
+        return "expression_placeholder"
 
     def parse_if_statement(self, if_node, parent_node):
         # Evaluate the condition
@@ -229,6 +346,21 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
             )
 
         return convergent_node
+
+    def parse_return_statement(self, return_node, parent_node):
+        """Parses a return statement and updates the control flow graph."""
+        # Create a new CFG node for the return statement
+        return_cfg_node = self.cfg.add_node(
+            node_id=f"return_{return_node['id']}", node_type=return_node["nodeType"]
+        )
+        # If the return statement has an associated value, parse and add it
+        if "expression" in return_node:
+            expression = self.parse_expression(return_node["expression"])
+            statement = ExpressionStatement(expression)
+            return_cfg_node.add_statement(statement)
+        # Connect the return node to the function exit node
+        self.cfg.connect_nodes(parent_node, return_cfg_node)
+        return return_cfg_node
 
     def add_statement_to_cfg_node(self, stmt_ast, cfg_node):
         # This method adds a statement from the AST to the CFG node
@@ -310,27 +442,39 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         return after_loop_node
 
     def parse_while_loop(self, while_node, parent_node):
+        """
+        Parses a while loop statement and updates the control flow graph.
+
+        This method creates nodes for the loop condition and loop body, as well as for the
+        continuation after the loop. It also connects these nodes to represent the flow of
+        control, including the potential for loop repetition and exit."""
         # Create a node for the loop condition
         loop_condition_node = self.cfg.add_node(
-            node_id=f"{while_node['id']}_condition", node_type="WhileCondition"
+            node_id=f"{while_node['id']}-condition",
+            node_type=while_node["nodeType"],
         )
         self.cfg.connect_nodes(parent_node, loop_condition_node)
+        condition_expression = self.parse_expression(while_node["condition"])
+        loop_condition_node.add_statement(ExpressionStatement(condition_expression))
 
         # Create a node for the body of the loop
         loop_body_node = self.cfg.add_node(
-            node_id=f"{while_node['id']}_body", node_type="WhileBody"
+            node_id=f"{while_node['id']}-body",
+            node_type=while_node["nodeType"],
         )
-        self.cfg.connect_nodes(loop_condition_node, loop_body_node)
-
         # Parse the body of the loop
-        self.parse_block(while_node["body"], loop_body_node)
+        if "body" in while_node:
+            print("parsing block for while node body")
+            self.parse_block(while_node["body"], loop_body_node)
 
         # Create a back edge from the body to the condition (for repeating the loop)
+        self.cfg.connect_nodes(loop_condition_node, loop_body_node)
         self.cfg.connect_nodes(loop_body_node, loop_condition_node)
 
         # Create a node for after the loop
         after_loop_node = self.cfg.add_node(
-            node_id=f"{while_node['id']}_after", node_type="AfterWhile"
+            node_id=f"{while_node['id']}-after",
+            node_type=while_node["nodeType"],
         )
         self.cfg.connect_nodes(loop_condition_node, after_loop_node)
 

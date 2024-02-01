@@ -4,26 +4,26 @@ from graphviz import Digraph
 
 
 class CallGraphAnalyzer(AbstractAnalyzer):
-    def __init__(self, ast_parser):
-        self.ast_parser = ast_parser
-        self.class_hierarchy_analyzer = ClassHierarchyAnalyzer(ast_parser)
+    def __init__(self, parser, class_hierarchy_analyzer):
+        self.parser = parser
+        self.class_hierarchy_analyzer = class_hierarchy_analyzer
 
     def analyze(self, algorithm):
         "algorithm CHA or RTA"
         class_hierarchy = self.class_hierarchy_analyzer.build_class_hierarchy(
-            self.ast_parser.ast
+            self.parser.ast
         )
 
         if algorithm == "RTA":
             instantiated_contracts = self.identify_instantiated_contracts(
-                self.ast_parser.ast
+                self.parser.ast
             )
             call_graph = self.build_rta_call_graph(
-                class_hierarchy, instantiated_contracts, self.ast_parser.ast
+                class_hierarchy, instantiated_contracts, self.parser.ast
             )
 
         elif algorithm == "CHA":
-            call_graph = self.build_cha_call_graph(class_hierarchy, self.ast_parser.ast)
+            call_graph = self.build_cha_call_graph(class_hierarchy, self.parser.ast)
         else:
             raise ValueError("Invalid algorithm")
         self.visualize(call_graph, algorithm)
