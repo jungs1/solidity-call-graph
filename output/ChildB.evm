@@ -1,4 +1,4 @@
-    /* "contracts/HelloWorld.sol":1083:1111  contract ChildB is Parent {} */
+    /* "contracts/HelloWorld.sol":1154:1182  contract ChildB is Parent {} */
   mstore(0x40, 0x80)
     /* "contracts/HelloWorld.sol":79:116  string state_variable = "Hello World" */
   mload(0x40)
@@ -27,7 +27,7 @@
   jump	// in
 tag_1:
   pop
-    /* "contracts/HelloWorld.sol":1083:1111  contract ChildB is Parent {} */
+    /* "contracts/HelloWorld.sol":1154:1182  contract ChildB is Parent {} */
   callvalue
   dup1
   iszero
@@ -905,7 +905,7 @@ tag_77:
   pop
   pop
   jump	// out
-    /* "contracts/HelloWorld.sol":1083:1111  contract ChildB is Parent {} */
+    /* "contracts/HelloWorld.sol":1154:1182  contract ChildB is Parent {} */
 tag_4:
   dataSize(sub_0)
   dup1
@@ -917,7 +917,7 @@ tag_4:
 stop
 
 sub_0: assembly {
-        /* "contracts/HelloWorld.sol":1083:1111  contract ChildB is Parent {} */
+        /* "contracts/HelloWorld.sol":1154:1182  contract ChildB is Parent {} */
       mstore(0x40, 0x80)
       callvalue
       dup1
@@ -940,7 +940,7 @@ sub_0: assembly {
       0x00
       dup1
       revert
-        /* "contracts/HelloWorld.sol":345:602  function if_else() public view returns (bool) {... */
+        /* "contracts/HelloWorld.sol":345:673  function if_else() public view returns (bool) {... */
     tag_3:
       tag_4
       tag_5
@@ -962,41 +962,59 @@ sub_0: assembly {
     tag_5:
         /* "contracts/HelloWorld.sol":385:389  bool */
       0x00
-        /* "contracts/HelloWorld.sol":401:412  uint256 num */
+        /* "contracts/HelloWorld.sol":401:418  uint256 cool_var1 */
       dup1
-        /* "contracts/HelloWorld.sol":415:418  100 */
+        /* "contracts/HelloWorld.sol":421:424  100 */
       0x64
-        /* "contracts/HelloWorld.sol":401:418  uint256 num = 100 */
+        /* "contracts/HelloWorld.sol":401:424  uint256 cool_var1 = 100 */
+      swap1
+      pop
+        /* "contracts/HelloWorld.sol":446:451  23230 */
+      0x5abe
+        /* "contracts/HelloWorld.sol":434:451  cool_var1 = 23230 */
+      swap1
+      pop
+        /* "contracts/HelloWorld.sol":461:478  uint256 cool_var2 */
+      0x00
+        /* "contracts/HelloWorld.sol":481:484  300 */
+      0x012c
+        /* "contracts/HelloWorld.sol":461:484  uint256 cool_var2 = 300 */
       swap1
       pop
         /* "contracts/HelloWorld.sol":498:502  true */
       0x01
-        /* "contracts/HelloWorld.sol":494:575  if (true) {... */
+        /* "contracts/HelloWorld.sol":494:622  if (true) {... */
       iszero
       tag_9
       jumpi
-        /* "contracts/HelloWorld.sol":524:525  3 */
+        /* "contracts/HelloWorld.sol":530:531  3 */
       0x03
-        /* "contracts/HelloWorld.sol":518:525  num = 3 */
-      swap1
-      pop
-        /* "contracts/HelloWorld.sol":494:575  if (true) {... */
-      jump(tag_10)
-    tag_9:
-        /* "contracts/HelloWorld.sol":562:564  10 */
-      0x0a
-        /* "contracts/HelloWorld.sol":556:564  num = 10 */
-      swap1
-      pop
-        /* "contracts/HelloWorld.sol":494:575  if (true) {... */
-    tag_10:
-        /* "contracts/HelloWorld.sol":591:595  true */
-      0x01
-        /* "contracts/HelloWorld.sol":584:595  return true */
+        /* "contracts/HelloWorld.sol":518:531  cool_var1 = 3 */
       swap2
       pop
+        /* "contracts/HelloWorld.sol":494:622  if (true) {... */
+      jump(tag_10)
+    tag_9:
+        /* "contracts/HelloWorld.sol":609:611  10 */
+      0x0a
+        /* "contracts/HelloWorld.sol":597:611  cool_var1 = 10 */
+      swap2
       pop
-        /* "contracts/HelloWorld.sol":345:602  function if_else() public view returns (bool) {... */
+        /* "contracts/HelloWorld.sol":494:622  if (true) {... */
+    tag_10:
+        /* "contracts/HelloWorld.sol":643:645  30 */
+      0x1e
+        /* "contracts/HelloWorld.sol":631:645  cool_var2 = 30 */
+      swap1
+      pop
+        /* "contracts/HelloWorld.sol":662:666  true */
+      0x01
+        /* "contracts/HelloWorld.sol":655:666  return true */
+      swap3
+      pop
+      pop
+      pop
+        /* "contracts/HelloWorld.sol":345:673  function if_else() public view returns (bool) {... */
       swap1
       jump	// out
         /* "#utility.yul":7:97   */
@@ -1069,5 +1087,5 @@ sub_0: assembly {
       pop
       jump	// out
 
-    auxdata: 0xa2646970667358221220ccfdc07723667e5229e69e67172a8e6f393dbad01131682eb8ad3e58c711824864736f6c63430008180033
+    auxdata: 0xa26469706673582212205334825b5136e0bc1a7219dc8713d2938de0d8a3506b0ce7e9e3b1256780cb6a64736f6c63430008180033
 }

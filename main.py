@@ -23,6 +23,15 @@ if __name__ == "__main__":
     control_flow_graph_analyzer = ControlFlowGraphAnalyzer(parser)
     control_flow_graph_analyzer.analyze()
 
+    # print all nodes and defs and gens
+    for k, v in control_flow_graph_analyzer.cfg.nodes.items():
+        print("------>")
+        print(v.node_id, v.node_type)  # node id
+        print("statements: ", v.statements)
+        print("defs: ", v.defs)
+        print("gen: ", v.gens)
+        print("----->\n")
+
     # Data Flow Analysis
-    # data_flow_analyzer = DataFlowAnalyzer(parser, control_flow_graph_analyzer)
-    # data_flow_analyzer.analyze()
+    data_flow_analyzer = DataFlowAnalyzer(parser, control_flow_graph_analyzer)
+    data_flow_analyzer.analyze()

@@ -15,15 +15,16 @@ contract Parent {
     // }
 
     function if_else() public view returns (bool) {
-        uint256 num = 100;
-        // if (3 < 3) {
-        //     return false;
-        // }
+        uint256 cool_var1 = 100;
+        cool_var1 = 23230;
+        uint256 cool_var2 = 300;
         if (true) {
-            num = 3;
+            cool_var1 = 3;
+            cool_var1 = cool_var1;
         } else {
-            num = 10;
+            cool_var1 = 10;
         }
+        cool_var2 = 30;
         return true;
     }
 
