@@ -20,7 +20,7 @@ class FunctionCallStatement(Statement):
         super().__init__(text)
 
 
-class DeclarationStatement(Statement):
+class VariableDeclarationStatement(Statement):
     def __init__(
         self, variable_name: str, variable_type: str, initial_value: str = None
     ):
@@ -58,6 +58,10 @@ class CFGNode:
     def add_statement(self, statement):
         """Add a statement to the node's list of statements."""
         self.statements.append(statement)
+
+    def add_definition(self, variable_name):
+        """Add a variable definition to the node."""
+        self.definitions.add(variable_name)
 
     def add_incoming_edge(self, node, annotation=None):
         """Add an incoming edge to the node."""
@@ -150,11 +154,6 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         self.parse()
         self.visualize()
 
-    def get_source_snippet(self, src):
-        start, length = map(int, src.split(":")[:2])
-
-        return self.parser.source_code[start : start + length]
-
     def parse(self):
         for node in self.parser.ast["nodes"]:
             if node["nodeType"] == "ContractDefinition":
@@ -209,8 +208,11 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         variable_name = var_decl_node["declarations"][0]["name"]
         variable_type = var_decl_node["declarations"][0]["typeName"]["name"]
         initial_value = var_decl_node.get("initialValue", {}).get("value")
-        statement = DeclarationStatement(variable_name, variable_type, initial_value)
+        statement = VariableDeclarationStatement(
+            variable_name, variable_type, initial_value
+        )
         parent_node.add_statement(statement)
+        parent_node.add_definition(variable_name)
         return parent_node
 
     def parse_expression_statement(self, expr_stmt_node, parent_node):
@@ -259,20 +261,149 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
                 if_node["condition"], parent_node
             )
             parent_node = condition_node
-        if_condition_code = self.get_source_snippet(if_node["condition"]["src"])
+
+        print("if node , if", if_node)
+        temp = {
+            "condition": {
+                "hexValue": "74727565",
+                "id": 13,
+                "isConstant": False,
+                "isLValue": False,
+                "isPure": True,
+                "kind": "bool",
+                "lValueRequested": False,
+                "nodeType": "Literal",
+                "src": "433:4:0",
+                "typeDescriptions": {"typeIdentifier": "t_bool", "typeString": "bool"},
+                "value": "true",
+            },
+            "falseBody": {
+                "id": 23,
+                "nodeType": "Block",
+                "src": "477:33:0",
+                "statements": [
+                    {
+                        "expression": {
+                            "id": 21,
+                            "isConstant": False,
+                            "isLValue": False,
+                            "isPure": False,
+                            "lValueRequested": False,
+                            "leftHandSide": {
+                                "id": 19,
+                                "name": "num",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 10,
+                                "src": "491:3:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256",
+                                },
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                                "hexValue": "3130",
+                                "id": 20,
+                                "isConstant": False,
+                                "isLValue": False,
+                                "isPure": True,
+                                "kind": "number",
+                                "lValueRequested": False,
+                                "nodeType": "Literal",
+                                "src": "497:2:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_10_by_1",
+                                    "typeString": "int_const 10",
+                                },
+                                "value": "10",
+                            },
+                            "src": "491:8:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256",
+                            },
+                        },
+                        "id": 22,
+                        "nodeType": "ExpressionStatement",
+                        "src": "491:8:0",
+                    }
+                ],
+            },
+            "id": 24,
+            "nodeType": "IfStatement",
+            "src": "429:81:0",
+            "trueBody": {
+                "id": 18,
+                "nodeType": "Block",
+                "src": "439:32:0",
+                "statements": [
+                    {
+                        "expression": {
+                            "id": 16,
+                            "isConstant": False,
+                            "isLValue": False,
+                            "isPure": False,
+                            "lValueRequested": False,
+                            "leftHandSide": {
+                                "id": 14,
+                                "name": "num",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 10,
+                                "src": "453:3:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256",
+                                },
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                                "hexValue": "33",
+                                "id": 15,
+                                "isConstant": False,
+                                "isLValue": False,
+                                "isPure": True,
+                                "kind": "number",
+                                "lValueRequested": False,
+                                "nodeType": "Literal",
+                                "src": "459:1:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_3_by_1",
+                                    "typeString": "int_const 3",
+                                },
+                                "value": "3",
+                            },
+                            "src": "453:7:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256",
+                            },
+                        },
+                        "id": 17,
+                        "nodeType": "ExpressionStatement",
+                        "src": "453:7:0",
+                    }
+                ],
+            },
+        }
 
         if_statement_node = self.cfg.add_node(
             node_id=f"{if_node['id']}-condition", node_type=if_node["nodeType"]
         )
         if_convergent_node = self.cfg.add_node(
-            node_id=f"{if_node['id']}-convergent", node_type=f"{if_node['nodeType']}"
+            node_id=f"{if_node['id']}-convergent", node_type=if_node["nodeType"]
         )
-        if_statement_node.add_statement(f"If: {if_condition_code}")
+
+        if_statement_expr = self.parse_expression(if_node["condition"])
+        if_statement_node.add_statement(if_statement_expr)
 
         self.cfg.connect_nodes(
             parent_node,
             if_statement_node,
-            annotation=f"Condition: {self.get_source_snippet(if_node['src'])}",
+            annotation=f"Condition: {if_statement_expr}",
         )
 
         # Process the true body
@@ -315,18 +446,6 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         # Connect the return node to the function exit node
         self.cfg.connect_nodes(parent_node, return_cfg_node)
         return return_cfg_node
-
-    def add_statement_to_cfg_node(self, stmt_ast, cfg_node):
-        # This method adds a statement from the AST to the CFG node
-        # It could be a variable declaration, assignment, etc.
-        if stmt_ast["nodeType"] == "VariableDeclarationStatement":
-            # Handle variable declaration
-            # Extract relevant information from stmt_ast and add it to cfg_node
-            cfg_node.add_statement(f"Declare: {stmt_ast['src']}")
-        elif stmt_ast["nodeType"] == "ExpressionStatement":
-            # Handle expression statement (like an assignment)
-            # Extract relevant information from stmt_ast and add it to cfg_node
-            cfg_node.add_statement(f"Expr: {stmt_ast['src']}")
 
     def parse_for_loop(self, for_node, parent_node):
         def process_for_init(init_ast, init_node_cfg):
