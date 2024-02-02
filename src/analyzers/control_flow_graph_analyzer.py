@@ -53,6 +53,7 @@ class CFGNode:
         self.statements: List[str] = []
         self.incoming_edges: List[Tuple["CFGNode", Optional[str]]] = []
         self.outgoing_edges: List[Tuple["CFGNode", Optional[str]]] = []
+        self.definitions = set()  # Store variable definitions made in this node
 
     def add_statement(self, statement):
         """Add a statement to the node's list of statements."""
@@ -66,43 +67,19 @@ class CFGNode:
         """Add an outgoing edge to the node."""
         self.outgoing_edges.append((node, annotation))
 
-    def format_label(self):
-        """Create a human-readable label for the node."""
-        label_parts = [f"Node: {self.node_id} ({self.node_type})"]
-        print("labl_parts", label_parts)
-        for statement in self.statements:
-            label_parts.append(f"  {statement}")
-        # label_parts.extend(self.statements)
-        return "\n".join(label_parts)
-
 
 class ControlFlowGraph:
     def __init__(self) -> None:
         self.nodes: Dict[str, CFGNode] = {}
         self.function_nodes: Dict[str, Tuple[CFGNode, CFGNode]] = {}
 
-    def connect_function_call(
-        self, caller_node: CFGNode, function_id: str
-    ) -> Optional[CFGNode]:
-        """Connect the caller node to the entry of the called function."""
-        entry_node, exit_node = self.function_nodes.get(function_id, (None, None))
-        if entry_node:
-            self.connect_nodes(caller_node, entry_node)
-            # Assuming the caller node will receive control back after the function call
-            return_node = self.add_node(f"return_from_{function_id}")
-            self.connect_nodes(exit_node, return_node)
-            return return_node
-        return None
-
     def add_node(self, node_id: str, node_type: str) -> CFGNode:
         """Add a new node to the control flow graph."""
         if type(node_id) == int:
             node_id = str(node_id)
-        return self._create_and_add_node(node_id, node_type)
-
-    def find_node(self, node_id: str) -> Optional[CFGNode]:
-        """Find a node in the control flow graph by its ID."""
-        return self.nodes.get(node_id, None)
+        node = CFGNode(node_id=node_id, node_type=node_type)
+        self.nodes[node_id] = node
+        return node
 
     def add_function_entry_exit(
         self, function_id: str, function_name: str
@@ -121,23 +98,6 @@ class ControlFlowGraph:
         """Connect two nodes in the control flow graph."""
         from_node.add_outgoing_edge(to_node, annotation)
         to_node.add_incoming_edge(from_node, annotation)
-
-    def _create_and_add_node(self, node_id: str, node_type: str) -> CFGNode:
-        node = CFGNode(node_id=node_id, node_type=node_type)
-        self.nodes[node_id] = node
-        return node
-
-    def pretty_print_nodes(self) -> None:
-        """Print a human-readable representation of the nodes in the graph."""
-        for node_id, node in self.nodes.items():
-            print(node.format_label())
-            print(
-                f"Incoming edges: {[(n.node_id, ann) for n, ann in node.incoming_edges]}"
-            )
-            print(
-                f"Outgoing edges: {[(n.node_id, ann) for n, ann in node.outgoing_edges]}"
-            )
-            print("--------------------------")
 
 
 class ControlFlowGraphAnalyzer(AbstractAnalyzer):
@@ -161,13 +121,9 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
             "FunctionEntry": "lightblue",
             "FunctionExit": "lightblue",
             "IfStatement": "orange",
-            "IfStatement Convergent": "orange",
             "WhileStatement": "orange",
-            "ForInit": "orange",
-            "ForCondition": "orange",
-            "ForBody": "orange",
-            "AfterFor": "orange",
-            "ForIncrement": "orange",
+            "ForStatement": "orange",
+            "BinaryOperation": "orange",
             "Return": "lightgreen",
         }
         # Add nodes to the graph
@@ -298,8 +254,6 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         return "expression_placeholder"
 
     def parse_if_statement(self, if_node, parent_node):
-        # Evaluate the condition
-        # Par
         if if_node["condition"]["nodeType"] == "BinaryOperation":
             condition_node = self.parse_logical_expression(
                 if_node["condition"], parent_node
@@ -308,10 +262,10 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         if_condition_code = self.get_source_snippet(if_node["condition"]["src"])
 
         if_statement_node = self.cfg.add_node(
-            node_id=if_node["id"], node_type=if_node["nodeType"]
+            node_id=f"{if_node['id']}-condition", node_type=if_node["nodeType"]
         )
-        convergent_node = self.cfg.add_node(
-            f"convergent_ {if_node['id']}", f"{if_node['nodeType']} Convergent"
+        if_convergent_node = self.cfg.add_node(
+            node_id=f"{if_node['id']}-convergent", node_type=f"{if_node['nodeType']}"
         )
         if_statement_node.add_statement(f"If: {if_condition_code}")
 
@@ -324,17 +278,17 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
         # Process the true body
         if "trueBody" in if_node:
             true_branch_node = self.cfg.add_node(
-                node_id=f"{if_node['id']}_true", node_type=if_node["nodeType"]
+                node_id=f"{if_node['id']}-true", node_type=if_node["nodeType"]
             )
             self.cfg.connect_nodes(
                 if_statement_node, true_branch_node, annotation=f"True"
             )
             self.parse_block(if_node["trueBody"], true_branch_node)
-            self.cfg.connect_nodes(true_branch_node, convergent_node)
+            self.cfg.connect_nodes(true_branch_node, if_convergent_node)
         # Process the false body
         if "falseBody" in if_node:
             false_branch_node = self.cfg.add_node(
-                node_id=f"{if_node['id']}_false", node_type=if_node["nodeType"]
+                node_id=f"{if_node['id']}-false", node_type=if_node["nodeType"]
             )
             self.cfg.connect_nodes(
                 if_statement_node, false_branch_node, annotation=f"False"
@@ -342,10 +296,10 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
             self.parse_block(if_node["falseBody"], false_branch_node)
             self.cfg.connect_nodes(
                 false_branch_node,
-                convergent_node,
+                if_convergent_node,
             )
 
-        return convergent_node
+        return if_convergent_node
 
     def parse_return_statement(self, return_node, parent_node):
         """Parses a return statement and updates the control flow graph."""
@@ -396,7 +350,7 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         # Create a node for the initialization
         init_node = self.cfg.add_node(
-            node_id=f"{for_node['id']}_init", node_type="ForInit"
+            node_id=f"{for_node['id']}-init", node_type=for_node["nodeType"]
         )
         self.cfg.connect_nodes(parent_node, init_node)
 
@@ -405,7 +359,7 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         # Create a node for the loop condition
         loop_condition_node = self.cfg.add_node(
-            node_id=f"{for_node['id']}_condition", node_type="ForCondition"
+            node_id=f"{for_node['id']}-condition", node_type=for_node["nodeType"]
         )
         self.cfg.connect_nodes(init_node, loop_condition_node)
 
@@ -414,7 +368,7 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         # Create a node for the body of the loop
         loop_body_node = self.cfg.add_node(
-            node_id=f"{for_node['id']}_body", node_type="ForBody"
+            node_id=f"{for_node['id']}_body", node_type=for_node["nodeType"]
         )
         self.cfg.connect_nodes(loop_condition_node, loop_body_node)
 
@@ -423,7 +377,7 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         # Create a node for the increment/update part of the loop
         increment_node = self.cfg.add_node(
-            node_id=f"{for_node['id']}_increment", node_type="ForIncrement"
+            node_id=f"{for_node['id']}_increment", node_type=for_node["nodeType"]
         )
         self.cfg.connect_nodes(loop_body_node, increment_node)
 
@@ -435,7 +389,7 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         # Create a node for after the loop
         after_loop_node = self.cfg.add_node(
-            node_id=f"{for_node['id']}_after", node_type="AfterFor"
+            node_id=f"{for_node['id']}_after", node_type=for_node["nodeType"]
         )
         self.cfg.connect_nodes(loop_condition_node, after_loop_node)
 
@@ -480,91 +434,56 @@ class ControlFlowGraphAnalyzer(AbstractAnalyzer):
 
         return after_loop_node
 
-    def process_expression(self, expr_ast, cfg_node):
-        # Determine the type of expression and handle accordingly
-        if expr_ast["nodeType"] == "Literal":
-            self.process_literal(expr_ast, cfg_node)
-        elif expr_ast["nodeType"] == "BinaryOperation":
-            self.process_binary_operation(expr_ast, cfg_node)
-        elif expr_ast["nodeType"] == "UnaryOperation":
-            self.process_unary_operation(expr_ast, cfg_node)
-        elif expr_ast["nodeType"] == "Identifier":
-            self.process_identifier(expr_ast, cfg_node)
-        elif expr_ast["nodeType"] == "FunctionCall":
-            self.process_function_call(expr_ast, cfg_node)
-        # ... other expression types ...
-
-    def process_literal(self, literal_ast, cfg_node):
-        code_snippet = self.get_source_snippet(literal_ast["src"])
-        cfg_node.add_statement(f"Literal: {code_snippet}")
-
-    def process_binary_operation(self, binary_op_ast, cfg_node):
-        code_snippet = self.get_source_snippet(binary_op_ast["src"])
-        cfg_node.add_statement(f"Binary Operation: {code_snippet}")
-
-    def process_unary_operation(self, unary_op_ast, cfg_node):
-        # Handle unary operations (e.g., -, !)
-        operand = unary_op_ast["subExpression"]
-        operator = unary_op_ast["operator"]
-        cfg_node.add_statement(f"Unary Operation: {operator}{operand['src']}")
-
-    def process_identifier(self, identifier_ast, cfg_node):
-        # Handle identifiers (variable names, etc.)
-        name = identifier_ast["name"]
-        cfg_node.add_statement(f"Identifier: {name}")
-
-    def process_function_call(self, func_call_ast, cfg_node):
-        # Handle function calls
-        func_name = func_call_ast["expression"]["name"]  # Simplified; adjust as needed
-        cfg_node.add_statement(f"Function Call: {func_name}()")
-
     def parse_logical_expression(self, logical_expr_ast, parent_node):
         # Assuming logical_expr_ast is the AST node for "A || B" or "A && B"
         left_operand = logical_expr_ast["leftExpression"]
         right_operand = logical_expr_ast["rightExpression"]
+
         operator = logical_expr_ast["operator"]
 
+        left_expr_str = self.parse_expression(left_operand)
+        right_expr_str = self.parse_expression(right_operand)
+
         # Create nodes for evaluating left and right operands
-        left_node = self.cfg.add_node(
-            f"{left_operand['id']}_left", left_operand["nodeType"]
+        logical_expr_node = self.cfg.add_node(
+            f"{left_operand['id']}-logical-expr", logical_expr_ast["nodeType"]
         )
-        left_node_code_snippet = self.get_source_snippet(left_operand["src"])
-        left_node.add_statement(f"Evaluate left operand: {left_node_code_snippet}")
+        logical_expr_node.add_statement(f"{left_expr_str} {operator} {right_expr_str}")
+
+        # Create CFG nodes for the left and right expressions
+        left_node = self.cfg.add_node(
+            f"{left_operand['id']}-logical-expr-left", logical_expr_ast["nodeType"]
+        )
+        left_node.add_statement(left_expr_str)
 
         right_node = self.cfg.add_node(
-            f"{right_operand['id']}_right", right_operand["nodeType"]
+            f"{right_operand['id']}-logical-expr-right", logical_expr_ast["nodeType"]
         )
-        right_node_code_snippet = self.get_source_snippet(right_operand["src"])
-        right_node.add_statement(f"Evaluate right operand: {right_node_code_snippet}")
+        right_node.add_statement(right_expr_str)
 
         # Connect the parent node to the left operand node
         self.cfg.connect_nodes(parent_node, left_node)
-        # Evaluate the left operand
-        self.process_expression(left_operand, left_node)
+
+        # Create a bypass node for short-circuiting
+        bypass_node = self.cfg.add_node(
+            f"{logical_expr_ast['id']}-logical-expr-bypass",
+            logical_expr_ast["nodeType"],
+        )
+
         # Logic for short-circuiting
+        self.cfg.connect_nodes(left_node, parent_node)
+        self.cfg.connect_nodes(right_node, parent_node)
         if operator == "||":
             # For "||", if left is true, skip right operand
-            bypass_node = self.cfg.add_node(
-                f"{logical_expr_ast['id']}_bypass", "Bypass"
-            )
             self.cfg.connect_nodes(left_node, bypass_node, annotation="True")
-            self.cfg.connect_nodes(
-                left_node,
-                right_node,
-                annotation="False",
-            )
+            self.cfg.connect_nodes(left_node, right_node, annotation="False")
         elif operator == "&&":
-            pass
+            # For "&&", if left is false, skip right operand
+            self.cfg.connect_nodes(left_node, bypass_node, annotation="False")
+            self.cfg.connect_nodes(left_node, right_node, annotation="True")
 
-        # Evaluate the right operand (if not bypassed)
-        self.process_expression(right_operand, right_node)
+        # Connect the right node to the bypass node
+        self.cfg.connect_nodes(right_node, bypass_node)
 
-        convergent_node = self.cfg.add_node(
-            f"{logical_expr_ast['id']}_convergent",
-            f"{logical_expr_ast['nodeType']} Convergent",
-        )
-        # Connect the left and right nodes to the convergent node
-        self.cfg.connect_nodes(bypass_node, convergent_node)
-        self.cfg.connect_nodes(right_node, convergent_node)
-
-        return convergent_node
+        # The bypass node effectively acts as the convergent node
+        return bypass_node

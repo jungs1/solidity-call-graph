@@ -21,6 +21,8 @@ contract TokenFactory {
     function createToken(bool isBitcoin) public returns (IToken) {
         if (isBitcoin) {
             return new Bitcoin();
+        } else if (true || false) {
+            return new Bitcoin();
         } else {
             return new Ethereum();
         }
