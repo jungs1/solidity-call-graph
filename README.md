@@ -2,13 +2,14 @@
 
 # TODOs
 
+- [x] Solidity AST Parser
 - [x] Class Hierachy Analysis (CHA)
 - [x] Call Graph using Class Hierachy Analysis (CHA)
 - [x] Call Graph using Rapid Type Analysis (RTA)
 - [ ] Call Graph using Hybrid Type Analysis (XTA)
 - [ ] Call Graph using Variable Type Analysis (VTA)
 - [x] Control Flow Analysis
-- [ ] Data Flow Analysis
+- [x] Data Flow Analysis
 - [ ] Taint Analysis
 - [ ] Symbolic Execution
 - [ ] ...many more

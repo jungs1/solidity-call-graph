@@ -1,9 +1,10 @@
 import json
 import subprocess
 import os
+from src.parsers.nodes import ASTNode
 
 
-class ASTParser:
+class SolidityASTParser:
     def __init__(self, file_path):
         self.file_path = file_path
         self.source_code = None
@@ -31,7 +32,8 @@ class ASTParser:
                 "--asm",
                 "--overwrite",
                 self.file_path,
-            ]
+            ],
+            check=True,
         )
 
         for file in os.listdir("output"):
@@ -39,3 +41,7 @@ class ASTParser:
                 with open(f"output/{file}", "r") as ast_file:
                     self.ast = json.load(ast_file)
                     break
+
+        ast = ASTNode.create(self.ast)
+        representation = ast.visualize()
+        print("respresentation ", representation)
