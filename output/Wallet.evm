@@ -1,6 +1,6 @@
-    /* "contracts/example.sol":664:962  contract Wallet {... */
+    /* "contracts/example.sol":734:1032  contract Wallet {... */
   mstore(0x40, 0x80)
-    /* "contracts/example.sol":712:770  constructor(IToken _token) {... */
+    /* "contracts/example.sol":782:840  constructor(IToken _token) {... */
   callvalue
   dup1
   iszero
@@ -31,12 +31,12 @@ tag_1:
   tag_3
   jump	// in
 tag_2:
-    /* "contracts/example.sol":757:763  _token */
+    /* "contracts/example.sol":827:833  _token */
   dup1
-    /* "contracts/example.sol":749:754  token */
+    /* "contracts/example.sol":819:824  token */
   0x00
   dup1
-    /* "contracts/example.sol":749:763  token = _token */
+    /* "contracts/example.sol":819:833  token = _token */
   0x0100
   exp
   dup2
@@ -55,9 +55,9 @@ tag_2:
   swap1
   sstore
   pop
-    /* "contracts/example.sol":712:770  constructor(IToken _token) {... */
+    /* "contracts/example.sol":782:840  constructor(IToken _token) {... */
   pop
-    /* "contracts/example.sol":664:962  contract Wallet {... */
+    /* "contracts/example.sol":734:1032  contract Wallet {... */
   jump(tag_6)
     /* "#utility.yul":88:205   */
 tag_8:
@@ -230,7 +230,7 @@ tag_32:
   pop
   pop
   jump	// out
-    /* "contracts/example.sol":664:962  contract Wallet {... */
+    /* "contracts/example.sol":734:1032  contract Wallet {... */
 tag_6:
   dataSize(sub_0)
   dup1
@@ -242,7 +242,7 @@ tag_6:
 stop
 
 sub_0: assembly {
-        /* "contracts/example.sol":664:962  contract Wallet {... */
+        /* "contracts/example.sol":734:1032  contract Wallet {... */
       mstore(0x40, 0x80)
       callvalue
       dup1
@@ -275,7 +275,7 @@ sub_0: assembly {
       0x00
       dup1
       revert
-        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+        /* "contracts/example.sol":952:1030  function changeToken(IToken newToken) public {... */
     tag_3:
       tag_6
       0x04
@@ -295,7 +295,7 @@ sub_0: assembly {
       jump	// in
     tag_6:
       stop
-        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+        /* "contracts/example.sol":846:946  function makeTransfer(address to, uint256 amount) public {... */
     tag_4:
       tag_10
       0x04
@@ -315,7 +315,7 @@ sub_0: assembly {
       jump	// in
     tag_10:
       stop
-        /* "contracts/example.sol":686:705  IToken public token */
+        /* "contracts/example.sol":756:775  IToken public token */
     tag_5:
       tag_14
       tag_15
@@ -334,14 +334,14 @@ sub_0: assembly {
       sub
       swap1
       return
-        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+        /* "contracts/example.sol":952:1030  function changeToken(IToken newToken) public {... */
     tag_9:
-        /* "contracts/example.sol":945:953  newToken */
+        /* "contracts/example.sol":1015:1023  newToken */
       dup1
-        /* "contracts/example.sol":937:942  token */
+        /* "contracts/example.sol":1007:1012  token */
       0x00
       dup1
-        /* "contracts/example.sol":937:953  token = newToken */
+        /* "contracts/example.sol":1007:1023  token = newToken */
       0x0100
       exp
       dup2
@@ -360,12 +360,12 @@ sub_0: assembly {
       swap1
       sstore
       pop
-        /* "contracts/example.sol":882:960  function changeToken(IToken newToken) public {... */
+        /* "contracts/example.sol":952:1030  function changeToken(IToken newToken) public {... */
       pop
       jump	// out
-        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+        /* "contracts/example.sol":846:946  function makeTransfer(address to, uint256 amount) public {... */
     tag_13:
-        /* "contracts/example.sol":843:848  token */
+        /* "contracts/example.sol":913:918  token */
       0x00
       dup1
       sload
@@ -376,15 +376,15 @@ sub_0: assembly {
       div
       0xffffffffffffffffffffffffffffffffffffffff
       and
-        /* "contracts/example.sol":843:857  token.transfer */
+        /* "contracts/example.sol":913:927  token.transfer */
       0xffffffffffffffffffffffffffffffffffffffff
       and
       0xa9059cbb
-        /* "contracts/example.sol":858:860  to */
+        /* "contracts/example.sol":928:930  to */
       dup4
-        /* "contracts/example.sol":862:868  amount */
+        /* "contracts/example.sol":932:938  amount */
       dup4
-        /* "contracts/example.sol":843:869  token.transfer(to, amount) */
+        /* "contracts/example.sol":913:939  token.transfer(to, amount) */
       mload(0x40)
       dup4
       0xffffffff
@@ -439,11 +439,11 @@ sub_0: assembly {
       pop
       pop
       pop
-        /* "contracts/example.sol":776:876  function makeTransfer(address to, uint256 amount) public {... */
+        /* "contracts/example.sol":846:946  function makeTransfer(address to, uint256 amount) public {... */
       pop
       pop
       jump	// out
-        /* "contracts/example.sol":686:705  IToken public token */
+        /* "contracts/example.sol":756:775  IToken public token */
     tag_15:
       0x00
       dup1
@@ -1046,5 +1046,5 @@ sub_0: assembly {
       pop
       jump	// out
 
-    auxdata: 0xa26469706673582212206d2000c0590f712447a745cd14608c2d41e68b1c61a3b55be5fdcb5da9b6961e64736f6c63430008180033
+    auxdata: 0xa2646970667358221220a50342fcd44edba597a1e522616ed8c7701efada1cf3ea13af805887478b6fab64736f6c63430008180033
 }

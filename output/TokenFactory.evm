@@ -1,4 +1,4 @@
-    /* "contracts/example.sol":443:662  contract TokenFactory {... */
+    /* "contracts/example.sol":443:732  contract TokenFactory {... */
   mstore(0x40, 0x80)
   callvalue
   dup1
@@ -20,7 +20,7 @@ tag_1:
 stop
 
 sub_0: assembly {
-        /* "contracts/example.sol":443:662  contract TokenFactory {... */
+        /* "contracts/example.sol":443:732  contract TokenFactory {... */
       mstore(0x40, 0x80)
       callvalue
       dup1
@@ -43,7 +43,7 @@ sub_0: assembly {
       0x00
       dup1
       revert
-        /* "contracts/example.sol":471:660  function createToken(bool isBitcoin) public returns (IToken) {... */
+        /* "contracts/example.sol":471:730  function createToken(bool isBitcoin) public returns (IToken) {... */
     tag_3:
       tag_4
       0x04
@@ -80,7 +80,7 @@ sub_0: assembly {
       0x00
         /* "contracts/example.sol":546:555  isBitcoin */
       dup2
-        /* "contracts/example.sol":542:654  if (isBitcoin) {... */
+        /* "contracts/example.sol":542:724  if (isBitcoin) {... */
       iszero
       tag_11
       jumpi
@@ -115,15 +115,30 @@ sub_0: assembly {
       swap1
       pop
       jump(tag_10)
-        /* "contracts/example.sol":542:654  if (isBitcoin) {... */
+        /* "contracts/example.sol":542:724  if (isBitcoin) {... */
     tag_11:
-        /* "contracts/example.sol":629:643  new Ethereum() */
-      mload(0x40)
+        /* "contracts/example.sol":612:616  true */
+      0x01
+        /* "contracts/example.sol":612:625  true || false */
+      dup1
       tag_16
-      swap1
-      tag_17
-      jump	// in
+      jumpi
+      pop
+        /* "contracts/example.sol":620:625  false */
+      0x00
+        /* "contracts/example.sol":612:625  true || false */
     tag_16:
+        /* "contracts/example.sol":608:724  if (true || false) {... */
+      iszero
+      tag_17
+      jumpi
+        /* "contracts/example.sol":648:661  new Bitcoin() */
+      mload(0x40)
+      tag_18
+      swap1
+      tag_13
+      jump	// in
+    tag_18:
       mload(0x40)
       dup1
       swap2
@@ -135,19 +150,52 @@ sub_0: assembly {
       iszero
       dup1
       iszero
-      tag_18
+      tag_19
       jumpi
       returndatasize
       0x00
       dup1
       returndatacopy
       revert(0x00, returndatasize)
-    tag_18:
+    tag_19:
       pop
-        /* "contracts/example.sol":622:643  return new Ethereum() */
+        /* "contracts/example.sol":641:661  return new Bitcoin() */
       swap1
       pop
-        /* "contracts/example.sol":471:660  function createToken(bool isBitcoin) public returns (IToken) {... */
+      jump(tag_10)
+        /* "contracts/example.sol":608:724  if (true || false) {... */
+    tag_17:
+        /* "contracts/example.sol":699:713  new Ethereum() */
+      mload(0x40)
+      tag_21
+      swap1
+      tag_22
+      jump	// in
+    tag_21:
+      mload(0x40)
+      dup1
+      swap2
+      sub
+      swap1
+      0x00
+      create
+      dup1
+      iszero
+      dup1
+      iszero
+      tag_23
+      jumpi
+      returndatasize
+      0x00
+      dup1
+      returndatacopy
+      revert(0x00, returndatasize)
+    tag_23:
+      pop
+        /* "contracts/example.sol":692:713  return new Ethereum() */
+      swap1
+      pop
+        /* "contracts/example.sol":471:730  function createToken(bool isBitcoin) public returns (IToken) {... */
     tag_10:
       swap2
       swap1
@@ -162,7 +210,7 @@ sub_0: assembly {
       add
       swap1
       jump	// out
-    tag_17:
+    tag_22:
       dataSize(sub_1)
       dup1
       dataOffset(sub_1)
@@ -172,7 +220,7 @@ sub_0: assembly {
       swap1
       jump	// out
         /* "#utility.yul":88:205   */
-    tag_20:
+    tag_25:
         /* "#utility.yul":197:198   */
       0x00
         /* "#utility.yul":194:195   */
@@ -180,7 +228,7 @@ sub_0: assembly {
         /* "#utility.yul":187:199   */
       revert
         /* "#utility.yul":334:424   */
-    tag_22:
+    tag_27:
         /* "#utility.yul":368:375   */
       0x00
         /* "#utility.yul":411:416   */
@@ -198,21 +246,21 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":430:546   */
-    tag_23:
+    tag_28:
         /* "#utility.yul":500:521   */
-      tag_37
+      tag_42
         /* "#utility.yul":515:520   */
       dup2
         /* "#utility.yul":500:521   */
-      tag_22
+      tag_27
       jump	// in
-    tag_37:
+    tag_42:
         /* "#utility.yul":493:498   */
       dup2
         /* "#utility.yul":490:522   */
       eq
         /* "#utility.yul":480:540   */
-      tag_38
+      tag_43
       jumpi
         /* "#utility.yul":536:537   */
       0x00
@@ -221,12 +269,12 @@ sub_0: assembly {
         /* "#utility.yul":526:538   */
       revert
         /* "#utility.yul":480:540   */
-    tag_38:
+    tag_43:
         /* "#utility.yul":430:546   */
       pop
       jump	// out
         /* "#utility.yul":552:685   */
-    tag_24:
+    tag_29:
         /* "#utility.yul":595:600   */
       0x00
         /* "#utility.yul":633:639   */
@@ -237,13 +285,13 @@ sub_0: assembly {
       swap1
       pop
         /* "#utility.yul":649:679   */
-      tag_40
+      tag_45
         /* "#utility.yul":673:678   */
       dup2
         /* "#utility.yul":649:679   */
-      tag_23
+      tag_28
       jump	// in
-    tag_40:
+    tag_45:
         /* "#utility.yul":552:685   */
       swap3
       swap2
@@ -266,19 +314,19 @@ sub_0: assembly {
       slt
         /* "#utility.yul":764:883   */
       iszero
-      tag_42
+      tag_47
       jumpi
         /* "#utility.yul":802:881   */
-      tag_43
-      tag_20
+      tag_48
+      tag_25
       jump	// in
-    tag_43:
+    tag_48:
         /* "#utility.yul":764:883   */
-    tag_42:
+    tag_47:
         /* "#utility.yul":922:923   */
       0x00
         /* "#utility.yul":947:997   */
-      tag_44
+      tag_49
         /* "#utility.yul":989:996   */
       dup5
         /* "#utility.yul":980:986   */
@@ -288,9 +336,9 @@ sub_0: assembly {
         /* "#utility.yul":965:987   */
       add
         /* "#utility.yul":947:997   */
-      tag_24
+      tag_29
       jump	// in
-    tag_44:
+    tag_49:
         /* "#utility.yul":937:997   */
       swap2
       pop
@@ -303,7 +351,7 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1020:1146   */
-    tag_25:
+    tag_30:
         /* "#utility.yul":1057:1064   */
       0x00
         /* "#utility.yul":1097:1139   */
@@ -321,7 +369,7 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1152:1212   */
-    tag_26:
+    tag_31:
         /* "#utility.yul":1180:1183   */
       0x00
         /* "#utility.yul":1201:1206   */
@@ -335,29 +383,29 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1218:1360   */
-    tag_27:
+    tag_32:
         /* "#utility.yul":1268:1277   */
       0x00
         /* "#utility.yul":1301:1354   */
-      tag_48
+      tag_53
         /* "#utility.yul":1319:1353   */
-      tag_49
+      tag_54
         /* "#utility.yul":1328:1352   */
-      tag_50
+      tag_55
         /* "#utility.yul":1346:1351   */
       dup5
         /* "#utility.yul":1328:1352   */
-      tag_25
+      tag_30
       jump	// in
-    tag_50:
+    tag_55:
         /* "#utility.yul":1319:1353   */
-      tag_26
+      tag_31
       jump	// in
-    tag_49:
+    tag_54:
         /* "#utility.yul":1301:1354   */
-      tag_25
+      tag_30
       jump	// in
-    tag_48:
+    tag_53:
         /* "#utility.yul":1288:1354   */
       swap1
       pop
@@ -367,17 +415,17 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1366:1492   */
-    tag_28:
+    tag_33:
         /* "#utility.yul":1416:1425   */
       0x00
         /* "#utility.yul":1449:1486   */
-      tag_52
+      tag_57
         /* "#utility.yul":1480:1485   */
       dup3
         /* "#utility.yul":1449:1486   */
-      tag_27
+      tag_32
       jump	// in
-    tag_52:
+    tag_57:
         /* "#utility.yul":1436:1486   */
       swap1
       pop
@@ -387,17 +435,17 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1498:1636   */
-    tag_29:
+    tag_34:
         /* "#utility.yul":1560:1569   */
       0x00
         /* "#utility.yul":1593:1630   */
-      tag_54
+      tag_59
         /* "#utility.yul":1624:1629   */
       dup3
         /* "#utility.yul":1593:1630   */
-      tag_28
+      tag_33
       jump	// in
-    tag_54:
+    tag_59:
         /* "#utility.yul":1580:1630   */
       swap1
       pop
@@ -407,15 +455,15 @@ sub_0: assembly {
       pop
       jump	// out
         /* "#utility.yul":1642:1797   */
-    tag_30:
+    tag_35:
         /* "#utility.yul":1741:1790   */
-      tag_56
+      tag_61
         /* "#utility.yul":1784:1789   */
       dup2
         /* "#utility.yul":1741:1790   */
-      tag_29
+      tag_34
       jump	// in
-    tag_56:
+    tag_61:
         /* "#utility.yul":1736:1739   */
       dup3
         /* "#utility.yul":1729:1791   */
@@ -438,7 +486,7 @@ sub_0: assembly {
       swap1
       pop
         /* "#utility.yul":1959:2042   */
-      tag_58
+      tag_63
         /* "#utility.yul":2039:2040   */
       0x00
         /* "#utility.yul":2028:2037   */
@@ -448,9 +496,9 @@ sub_0: assembly {
         /* "#utility.yul":2015:2021   */
       dup5
         /* "#utility.yul":1959:2042   */
-      tag_30
+      tag_35
       jump	// in
-    tag_58:
+    tag_63:
         /* "#utility.yul":1803:2049   */
       swap3
       swap2
@@ -772,7 +820,7 @@ sub_0: assembly {
               pop
               jump	// out
 
-            auxdata: 0xa264697066735822122087bbdabc968d5ed4e7eea540d32ba2b9b14bcd0dbe4b503c81c46acb4e19c2ce64736f6c63430008180033
+            auxdata: 0xa2646970667358221220d45ce95515d74119f79689740dcc765b607dca477f23f1ce1839938b4bf880b164736f6c63430008180033
         }
     }
 
@@ -1089,9 +1137,9 @@ sub_0: assembly {
               pop
               jump	// out
 
-            auxdata: 0xa26469706673582212203440382fb5a7fa2dd4e169d6ee38fb3ab763df407a8cfa4a929e245bb90a3da064736f6c63430008180033
+            auxdata: 0xa26469706673582212203c051e071221ad2392d61b922d6382f11871a426f2524ca7d807fdb7f0086d4f64736f6c63430008180033
         }
     }
 
-    auxdata: 0xa2646970667358221220bc471ad4e527574fbbbf15b0e328e6339d344d660c4b4132c1752536041e3bd364736f6c63430008180033
+    auxdata: 0xa2646970667358221220da4dea102f460379c916f72ba923e910be26e5652d7d6466a00b93c8d7b89df664736f6c63430008180033
 }

@@ -11,12 +11,16 @@ class ASTNode:
             return SourceUnit(node)
         elif nodeType == "ContractDefinition":
             return ContractDefinition(node)
+        elif nodeType == "FunctionCall":
+            return FunctionCall(node)
         elif nodeType == "Block":
             return Block(node)
         elif nodeType == "VariableDeclaration":
             return VariableDeclaration(node)
         elif nodeType == "VariableDeclarationStatement":
             return VariableDeclarationStatement(node)
+        elif nodeType == "NewExpression":
+            return NewExpression(node)
         elif nodeType == "ExpressionStatement":
             return ExpressionStatement(node)
         elif nodeType == "IfStatement":
@@ -41,9 +45,8 @@ class ASTNode:
             return WhileStatement(node)
         elif nodeType == "UnaryOperation":
             return UnaryOperation(node)
-
         else:
-            raise Exception(f"Unknown node type: {nodeType}")
+            return ASTNode(node)
 
     def visualize(self, level=0):
         indent = "  " * level
@@ -80,6 +83,66 @@ class ContractDefinition(ASTNode):
             node_repr = node.visualize(level + 1)
             if node_repr:
                 representation += node_repr
+        return representation
+
+
+class FunctionCall(ASTNode):
+    def __init__(self, node):
+        super().__init__(node)
+        self.arguments = [ASTNode.create(arg) for arg in node.get("arguments", [])]
+        self.expression = ASTNode.create(node.get("expression"))
+        self.isConstant = node.get("isConstant", False)
+        self.isLValue = node.get("isLValue", False)
+        self.isPure = node.get("isPure", False)
+        self.kind = node.get("kind", "functionCall")
+        self.tryCall = node.get("tryCall", False)
+        self.typeString = node.get("typeDescriptions", {}).get("typeString", "")
+
+    def visualize(self, level=0):
+        indent = "  " * level
+        representation = super().visualize(level)
+        representation += f"{indent}Kind: {self.kind}\n"
+        representation += f"{indent}Is Constant: {self.isConstant}\n"
+        representation += f"{indent}Is LValue: {self.isLValue}\n"
+        representation += f"{indent}Is Pure: {self.isPure}\n"
+        representation += f"{indent}Type: {self.typeString}\n"
+        representation += f"{indent}Try Call: {self.tryCall}\n"
+        representation += f"{indent}Expression:\n{self.expression.visualize(level + 1)}"
+        if self.arguments:
+            representation += f"{indent}Arguments:\n"
+            for arg in self.arguments:
+                representation += arg.visualize(level + 2)
+        else:
+            representation += f"{indent}Arguments: None\n"
+        return representation
+
+
+class NewExpression(ASTNode):
+    def __init__(self, node):
+        super().__init__(node)
+        self.isConstant = node.get("isConstant", False)
+        self.isLValue = node.get("isLValue", False)
+        self.isPure = node.get("isPure", False)
+        self.lValueRequested = node.get("lValueRequested", False)
+        self.typeString = node.get("typeDescriptions", {}).get("typeString", "")
+        self.typeName = ASTNode.create(node.get("typeName"))
+        self.argumentTypes = node.get("argumentTypes", [])
+
+    def visualize(self, level=0):
+        indent = "  " * level
+        representation = super().visualize(level)
+        representation += f"{indent}Is Constant: {self.isConstant}\n"
+        representation += f"{indent}Is LValue: {self.isLValue}\n"
+        representation += f"{indent}Is Pure: {self.isPure}\n"
+        representation += f"{indent}Type: {self.typeString}\n"
+        representation += f"{indent}TypeName:\n{self.typeName.visualize(level + 1)}"
+        # Assuming argumentTypes would be more detailed, you could expand this
+        if self.argumentTypes:
+            representation += (
+                f"{indent}Argument Types: {', '.join(self.argumentTypes)}\n"
+            )
+        else:
+            representation += f"{indent}Argument Types: None\n"
         return representation
 
 

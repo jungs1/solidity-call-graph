@@ -10,6 +10,8 @@
 - [ ] Call Graph using Variable Type Analysis (VTA)
 - [x] Control Flow Analysis
 - [x] Data Flow Analysis
+  - [x] Rechability Analysis
+  - [x] Live Variable Analysis
 - [ ] Taint Analysis
 - [ ] Symbolic Execution
 - [ ] ...many more

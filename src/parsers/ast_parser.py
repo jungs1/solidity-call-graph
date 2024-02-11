@@ -9,6 +9,7 @@ class SolidityASTParser:
         self.file_path = file_path
         self.source_code = None
         self.ast = None
+        self.ast_v2 = None
 
     def load_code_file_file(self, file_path: str) -> None:
         """Load the source code from a file."""
@@ -35,13 +36,64 @@ class SolidityASTParser:
             ],
             check=True,
         )
+        print("file_path", self.file_path)  # contracts/example.sol
+        filename = self.file_path.split("/")[-1].split(".")[0]
 
         for file in os.listdir("output"):
-            if file.endswith(".ast"):
-                with open(f"output/{file}", "r") as ast_file:
-                    self.ast = json.load(ast_file)
-                    break
+            with open(f"output/{filename}.sol_json.ast", "r") as ast_file:
+                self.ast = json.load(ast_file)
+                break
 
-        ast = ASTNode.create(self.ast)
-        representation = ast.visualize()
-        print("respresentation ", representation)
+        self.ast_v2 = ASTNode.create(self.ast)
+        {
+            "arguments": [],
+            "expression": {
+                "argumentTypes": [],
+                "id": 44,
+                "isConstant": False,
+                "isLValue": False,
+                "isPure": False,
+                "lValueRequested": False,
+                "nodeType": "NewExpression",
+                "src": "578:11:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_function_creation_nonpayable$__$returns$_t_contract$_Bitcoin_$21_$",
+                    "typeString": "function () returns (contract Bitcoin)",
+                },
+                "typeName": {
+                    "id": 43,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                        "id": 42,
+                        "name": "Bitcoin",
+                        "nameLocations": ["582:7:0"],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 21,
+                        "src": "582:7:0",
+                    },
+                    "referencedDeclaration": 21,
+                    "src": "582:7:0",
+                    "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_Bitcoin_$21",
+                        "typeString": "contract Bitcoin",
+                    },
+                },
+            },
+            "id": 45,
+            "isConstant": False,
+            "isLValue": False,
+            "isPure": False,
+            "kind": "functionCall",
+            "lValueRequested": False,
+            "nameLocations": [],
+            "names": [],
+            "nodeType": "FunctionCall",
+            "src": "578:13:0",
+            "tryCall": False,
+            "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Bitcoin_$21",
+                "typeString": "contract Bitcoin",
+            },
+        }
+        representation = self.ast_v2.visualize()
+        print(representation)

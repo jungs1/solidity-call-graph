@@ -11,7 +11,7 @@ class CallGraphAnalyzer(AbstractAnalyzer):
     def analyze(self, algorithm):
         "algorithm CHA or RTA"
         class_hierarchy = self.class_hierarchy_analyzer.build_class_hierarchy(
-            self.parser.ast
+            self.parser.ast_v2
         )
 
         if algorithm == "RTA":
