@@ -43,13 +43,12 @@ class ASTNode:
             return UnaryOperation(node)
 
         else:
-            print("", node)
             raise Exception(f"Unknown node type: {nodeType}")
 
     def visualize(self, level=0):
         indent = "  " * level
         representation = f"{indent}{self.nodeType} (ID: {self.id})\n"
-        # representation += f"{indent}  Src: {self.src}\n"
+        representation += f"{indent}  Src: {self.src}\n"
         return representation
 
 
@@ -97,6 +96,11 @@ class WhileStatement(ASTNode):
             representation += self.condition.visualize(level + 1)
         if self.body:
             representation += self.body.visualize(level + 1)
+        if self.nodes:
+            for node in self.nodes:
+                node_repr = node.visualize(level + 1)
+                if node_repr:
+                    representation += node_repr
         return representation
 
 
@@ -108,8 +112,12 @@ class UnaryOperation(ASTNode):
 
     def visualize(self, level=0):
         representation = super().visualize(level)
+        indent = "  " * level
+        representation += f"{indent}  Operator: {self.operator}\n"
         if self.subExpression:
-            representation += self.subExpression.visualize(level + 1)
+            representation += (
+                f"{indent}  SubExpression:\n {self.subExpression.visualize(level + 1)}"
+            )
         return representation
 
 
@@ -122,6 +130,7 @@ class Return(ASTNode):
         self.functionReturnParameters = node.get("functionReturnParameters")
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
         representation = f"{indent}{self.nodeType}:\n"
         if self.expression:
@@ -145,6 +154,7 @@ class IfStatement(ASTNode):
         )
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
         representation = f"{indent}{self.nodeType}:\n"
         representation += f"{indent}  Condition:\n{self.condition.visualize(level + 2)}"
@@ -167,6 +177,7 @@ class BinaryOperation(ASTNode):
         self.rightExpression = ASTNode.create(node.get("rightExpression"))
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
         representation = f"{indent}{self.nodeType} (Operator: {self.operator}):\n"
         representation += (
@@ -188,6 +199,8 @@ class VariableDeclaration(ASTNode):
 
     def visualize(self, level=0):
         representation = super().visualize(level)
+        indent = "  " * level
+        representation += f"{indent}  Name: {self.name}\n"
         return representation
 
 
@@ -204,6 +217,7 @@ class Assignment(ASTNode):
         )  # Create the rhs node, which is detailed in the example
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
         representation = f"{indent}{self.nodeType} (Operator: {self.operator}):\n"
         representation += (
@@ -224,10 +238,11 @@ class VariableDeclarationStatement(ASTNode):
 
     def visualize(self, level=0):
         representation = super().visualize(level)
-        for decl in self.declarations:
-            decl_repr = decl.visualize(level + 1)
-            if decl_repr:
-                representation += decl_repr
+        indent = "  " * level
+        if self.declarations:
+            representation += f"{indent}  Declarations:\n"
+            for decl in self.declarations:
+                representation += decl.visualize(level + 1)
         return representation
 
 
@@ -237,9 +252,11 @@ class PragmaDirective(ASTNode):
         self.literals = node.get("literals", [])  # e.g., ["solidity", "^", "0.8", ".0"]
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
         literals_str = " ".join(self.literals)
-        return f"{indent}{self.nodeType}: {literals_str}\n"
+        representation += f"{indent}  Literals: {literals_str}\n"
+        return representation
 
 
 class ElementaryTypeName(ASTNode):
@@ -248,8 +265,9 @@ class ElementaryTypeName(ASTNode):
         self.name = node.get("name")  # e.g., "uint256", "address"
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
-        return f"{indent}{self.nodeType}: {self.name}\n"
+        representation += f"{indent}  Name: {self.name}\n"
 
 
 class FunctionDefinition(ASTNode):
@@ -268,9 +286,25 @@ class FunctionDefinition(ASTNode):
         self.body = ASTNode.create(node.get("body")) if node.get("body") else None
 
     def visualize(self, level=0):
+        indent = "  " * level
         representation = super().visualize(level)
+        # Adding function specific details
+        representation += f"{indent}  Name: {self.name}\n"
+        representation += f"{indent}  Visibility: {self.visibility}\n"
+        representation += f"{indent}  State Mutability: {self.stateMutability}\n"
+        # Handling parameters
+        if self.parameters:
+            representation += f"{indent}  Parameters:\n"
+            for param in self.parameters:
+                representation += param.visualize(level + 2)
+        # Handling return parameters
+        if self.returnParameters:
+            representation += f"{indent}  Return Parameters:\n"
+            for ret_param in self.returnParameters:
+                representation += ret_param.visualize(level + 2)
+        # Handling the function body
         if self.body:
-            representation += self.body.visualize(level + 1)
+            representation += f"{indent}  Body:\n{self.body.visualize(level + 2)}"
         return representation
 
 
@@ -280,10 +314,15 @@ class Block(ASTNode):
         self.statements = [ASTNode.create(stmt) for stmt in node.get("statements", [])]
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
-        representation = f"{indent}{self.nodeType}:\n"
-        for stmt in self.statements:
-            representation += stmt.visualize(level + 1)
+        statement_indent = "  " * (level + 1)
+        if self.statements:
+            representation += f"{indent}Statements:\n"
+            for stmt in self.statements:
+                representation += stmt.visualize(level + 2)
+        else:
+            representation += f"{statement_indent}None\n"
         return representation
 
 
@@ -293,8 +332,12 @@ class ExpressionStatement(ASTNode):
         self.expression = ASTNode.create(node.get("expression"))
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
-        return f"{indent}{self.nodeType}:\n {self.expression.visualize(level + 1)}"
+        representation += (
+            f"{indent}  Expression:\n{self.expression.visualize(level + 1)}"
+        )
+        return representation
 
 
 class Literal(ASTNode):
@@ -304,8 +347,10 @@ class Literal(ASTNode):
         self.value = node.get("value")  # The literal value, e.g., "Hello World", "100"
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
-        return f"{indent}{self.nodeType} ({self.kind}): {self.value}\n"
+        representation += f"{indent}  {self.kind}: {self.value}\n"
+        return representation
 
 
 class Identifier(ASTNode):
@@ -314,5 +359,7 @@ class Identifier(ASTNode):
         self.name = node.get("name")  # e.g., "uint256", "address"
 
     def visualize(self, level=0):
+        representation = super().visualize(level)
         indent = "  " * level
-        return f"{indent}{self.nodeType}: {self.name}\n"
+        representation += f"{indent}  Name: {self.name}\n"
+        return representation
